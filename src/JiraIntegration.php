@@ -90,7 +90,7 @@ class JiraIntegration
      */
     public function setLastResponseCode($value)
     {
-        $this->last_response_code = $value;
+        $this->last_response_code = (int) $value;
     }
     /**
      *
@@ -107,10 +107,10 @@ class JiraIntegration
     public function createTicket($data = array())
     {
         $result = $this->sendRequest('issue', $data, 'POST');
-        if ($result < 300) {
-            return array('key' => $this->getResult()->key);
+        if ($this->getLastResponseCode() > 300) {
+            throw new \Exception('Failed to create Jira ticket');
         }
-        return array('error' => print_r($this->getResult(), true));
+        return array('key' => $result->key);
     }
     /**
      * Simpleer interface for createTicket() but provides
@@ -168,10 +168,10 @@ class JiraIntegration
                 'update' => $options
             ), 'POST'
         );
-        if ($result < 300) {
-            return array('key' => $this->getResult()->key);
+        if ($this->getLastResponseCode() > 300) {
+            throw new \Exception('Failed to update Jira ticket');
         }
-        return array('error' => print_r($this->getResult(), true));
+        return array('key' => $result->key);
     }
     /**
      *
@@ -195,11 +195,13 @@ class JiraIntegration
     {
         $result = $this->sendRequest(
             'issue/' . $issue_key . '/comment', 
-            array('body' => $text),
+            array(
+                'body' => $text
+            ),
             'POST'
         );
-        if ($result < 300) {
-            return array('updated' => $this->getResult()->updated);
+        if ($this->getLastResponseCode() < 300) {
+            return array('updated' => $result->updated);
         }
         return array('error' => $this->getResult());
     }
@@ -279,7 +281,7 @@ class JiraIntegration
         } else {
             curl_setopt($ch, CURLOPT_HTTPGET, $data);
         }
-        $result = curl_exec($ch);
+        $result = json_decode(curl_exec($ch));
         $this->setLastResponseCode(curl_getinfo($ch, CURLINFO_HTTP_CODE));
         curl_close($ch);
         return $result;
