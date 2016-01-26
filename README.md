@@ -7,7 +7,6 @@ The idea behind this class is that you can use this to pull out information to b
 
 1. [Creating a ticket (Simple)](#createSimple)
 2. [Creating a ticket](#create)
-3. [Updating a ticket (Simple)](#updateSimple)
 4. [Updating a ticket](#update)
 5. [Adding comments to tickets](#addComment)
 6. [Retrieving a specific ticket](#getTicket)
@@ -48,16 +47,6 @@ $case_id = $jira->createTicket(array('fields' => array(
 ```
 
 As with the `simpleCreateTicket` function this will return the ID of the ticket that has been created.
-
-
-<a name="updateSimple"></a>
-###Updating a ticket (Simple)
-A basic way of updating the description of a ticket, with the ability to pass in an array to update other properties at the same time.
-```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$case_id = $jira->simpleUpdateTicket('DEMO-123', 'This is the new description of the ticket');
-```
 
 
 <a name="update"></a>
