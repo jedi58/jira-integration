@@ -161,7 +161,7 @@ class JiraIntegration
     /**
      *
      */
-    public function updateIssue($issue_key, $options)
+    public function updateTicket($issue_key, $options)
     {
         $result = $this->sendRequest(
             'issue/' . $issue_key, array(
@@ -176,7 +176,7 @@ class JiraIntegration
     /**
      *
      */
-    public function simpleUpdate($issue_key, $description, $options = array())
+    public function simpleUpdateTicket($issue_key, $description, $options = array())
     {
         $data = array_merge(
             array(
@@ -186,7 +186,7 @@ class JiraIntegration
             ),
             $options
         );
-        return $this->updateIssue($issue_key, $data);
+        return $this->updateTicket($issue_key, $data);
     }
     /**
      *
