@@ -22,7 +22,16 @@ Creates a new ticket and assigns it to the specified project (in the below examp
 ```php
 $jira = new JiraIntegration('https://jira.atlassian.com');
 $jira->authenticate('user', 'password');
-$case_id = $jira->simpleCreateTicket('DEMO', 'A test ticket', 'There is an issue here - please fix it');
+$case_id = $jira->simpleCreateTicket(
+    'DEMO',
+    'A test ticket',
+    'There is an issue here - please fix it',
+    'Bug',
+    array(
+        'originalEstimate' => '1d 2h 25m'
+        'remainingEstimate' => ''
+    )
+);
 ```
 
 This can also take optional parameters for setting the type of ticket, time tracking, and any other additional options in an array.
@@ -50,14 +59,29 @@ As with the `simpleCreateTicket` function this will return the ID of the ticket 
 
 
 <a name="update"></a>
-###Updating a ticket
+### Updating a ticket
 This is a more versatile way of updating a ticket's properties - all changes must be passed in to the array.
 ```php
 $jira = new JiraIntegration('https://jira.atlassian.com');
 $jira->authenticate('user', 'password');
-$case_id = $jira->createTicket(array('fields' => array(
-    'description' => 'This is the new description of the ticket'
+$case_id = $jira->updateTicket('DEMO-1234', array('fields' => array(
+    'summary' => 'This is the new description of the ticket'
 )));
+```
+
+
+<a name="deleteTicket"></a>
+### Deleting a ticket
+If a ticket has sub-tasks then it will be necessary to pass `true` into this function also in order to confirm that they should be removed.
+
+
+<a name="getTicket"></a>
+### Retrieving a specific ticket
+This will return an `StdClass` object containing the ticket and all it's properties.
+```php
+$jira = new JiraIntegration('https://jira.atlassian.com');
+$jira->authenticate('user', 'password');
+$ticket = $jira->getTicket('DEMO-123');
 ```
 
 
@@ -67,17 +91,13 @@ This will add a comment to the ticket.
 ```php
 $jira = new JiraIntegration('https://jira.atlassian.com');
 $jira->authenticate('user', 'password');
-$jira->addComment('This is a comment!');
+$jira->addComment('DEMO-123', 'This is a comment!', array(
+    'type' => 'role',
+    'value' => 'Administrators'
+));
 ```
 
-
-<a name="getTicket"></a>
-###Retrieving a specific ticket
-```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-
-```
+The result returned is an array with the only element being the timestamp the comment was added. The array in this example represents the visibility of the comment and is optional.
 
 
 <a name="getAllProjects"></a>
