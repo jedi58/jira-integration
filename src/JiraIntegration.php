@@ -10,23 +10,22 @@ class JiraIntegration
      */
     protected $api_base_url = '';
     /**
-     *
-     */
-    protected $return_type;
-    /**
-     *
+     * The base64 encoded username:password pair to use for authentication
      */
     protected $api_auth = '';
     /**
-     *
+     * The result of the last API call. Currently unused
      */
     protected $result = '';
     /**
-     *
+     * The HTTP status code from the last API call
      */
     protected $last_response_code = 0;
     /**
-     *
+     * Default constructior for JiraIntegration
+     * @param string $url The URL of the Jira API to connect to
+     * @param string $username The username to connect with
+     * @param stirng $password The password to connect with
      */
     public function __construct(
         $url = '',
@@ -34,66 +33,83 @@ class JiraIntegration
         $password = ''
     ) {
         $this->setApiBaseUrl($url);
-        $this->authenticate($username, $password);
+        if (!empty($username) && !empty($password)) {
+            $this->authenticate($username, $password);
+        }
     }
     /**
-     *
+     * Returns the value of {@link api_base_url}
+     * @return string The value of {@link api_base_url}
      */
     public function getApiBaseUrl()
     {
         return $this->api_base_url;
     }
     /**
-     *
+     * Returns the value of {@link api_auth}
+     * @return string The value of {@link api_auth}
      */
     public function getApiAuth()
     {
         return $this->api_auth;
     }
     /**
-     *
+     * Returns the value of {@link api_base_url}
+     * @param bool $json_encode Flag indicating if contents should be JSON
+     *          encoded when returned
+     * @return string The value of {@link api_base_url}
      */
     public function getResult($json_encode = false)
     {
         return $json_encode ? json_encode($this->result) : $this->result;
     }
     /**
-     *
+     * Returns the value of {@link last_response_code}
+     * @return int The value of {@link last_response_code}
      */
     public function getLastResponseCode()
     {
         return $this->last_response_code;
     }
     /**
-     *
+     * Sets the value of {@link api_base_url}
+     * @param string $value The URL to set {@link api_base_url} to
      */
     public function setApiBaseUrl($value)
     {
         $this->api_base_url = $value;
     }
     /**
-     *
+     * Sets the value of {@link api_auth}
+     @param string $value The string to set {@link api_auth} to
      */
     public function setApiAuth($value)
     {
         $this->api_auth = $value;
     }
     /**
-     *
+     * Sets the value of {@link result}
+     * @param string $value The value to set for {@link result}
+     * @param bool $json_decode Flag indicating if value should be JSON decoded
+     *      when assigned
      */
     public function setResult($value, $json_decode = false)
     {
         $this->result = $json_decode ? json_decode($value) : $value;
     }
     /**
-     *
+     * Sets the value of {@link last_response_code}
+     * @param int $value The value to set for {@link last_response_code}
      */
     public function setLastResponseCode($value)
     {
         $this->last_response_code = (int) $value;
     }
     /**
-     *
+     * Combines the username and password and sets {@link api_auth} to
+     * the base64 encoded result
+     * @param string $username The username to use
+     * @param string $password The password to use
      */
     public function authenticate($username, $password)
     {
@@ -102,26 +118,30 @@ class JiraIntegration
     /**
      * Creates a new ticket
      * @param string[] Settings to apply to the ticket
-     * @return 
+     * @return string[] The key of the created ticked. e.g. DEMO-123
      */
-    public function createTicket($data = array())
+    public function createTicket($data = array(), $notCreatedException = false)
     {
         $result = $this->sendRequest('issue', $data, 'POST');
-        if ($this->getLastResponseCode() > 300) {
-            throw new \Exception('Failed to create Jira ticket');
+        if ($this->getLastResponseCode() !== 201) {
+            if ($notCreatedException) {
+                throw new \Exception('Failed to create Jira ticket');
+            } else {
+                return array('key' => null);
+            }
         }
         return array('key' => $result->key);
     }
     /**
-     * Simpleer interface for createTicket() but provides
+     * Simple interface for {@link createTicket} but provides
      * less flexibility.
-     * @param
-     * @param
-     * @param
-     * @param
-     * @param
-     * @param
-     * @return
+     * @param string $project The project to assign the new ticket to
+     * @param string $title The title of the new ticket
+     * @param string $description A description for the new ticket
+     * @param string $issuetype The type of ticket being created
+     * @param string[] $timetracking Time estimates for the ticket
+     * @param string[] $custom Any custom properties to assign to the ticket
+     * @return string[] The key of the created ticket. e.g. DEMO-123
      */
     public function simpleCreateTicket(
         $project,
@@ -153,64 +173,100 @@ class JiraIntegration
         }
         if (isset($data['timetracking']) && !empty($timetracking)) {
             $data['fields']['timetracking'] = $timetracking;
-            // originalEstimate: '1d 2h 25m'
-            // remainingEstimate: ''
         }
         return $this->createTicket($data);
     }
     /**
-     *
+     * Updates the specified Jira ticket
+     * @param string $issue_key The ticket to be update
+     * @param string[] $data The changes to make to the ticket
+     * @return bool Returns TRUE if successful
      */
-    public function updateTicket($issue_key, $options)
+    public function updateTicket($issue_key, $data, $notUpdatedException = false)
+    {
+        $result = $this->sendRequest('issue/' . $issue_key, $data, 'PUT');
+        if ($this->getLastResponseCode() !== 204) {
+            if ($notUpdatedException) {
+                throw new \Exception('Failed to update Jira ticket');
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * Deletes the specified ticket
+     * @param string $issue_key The ticket to be removed
+     * @param bool $remove_subtasks Flag indicating if sub-tasks can be removed
+     * @return bool Returns TRUE if deletion was successful
+     */
+    public function deleteTicket($issue_key, $remove_subtasks = false, $notDeletedException = false)
     {
         $result = $this->sendRequest(
-            'issue/' . $issue_key, array(
-                'update' => $options
-            ), 'POST'
-        );
-        if ($this->getLastResponseCode() > 300) {
-            throw new \Exception('Failed to update Jira ticket');
-        }
-        return array('key' => $result->key);
-    }
-    /**
-     *
-     */
-    public function simpleUpdateTicket($issue_key, $description, $options = array())
-    {
-        $data = array_merge(
+            'issue/' . $issue_key,
             array(
-                'description' => array(
-                    'set' => $description
-                )
+                'deleteSubtasks' => (string) $remove_subtasks 
             ),
-            $options
+            'DELETE'
         );
-        return $this->updateTicket($issue_key, $data);
+        $response = $this->getLastResponseCode();
+        if ($response < 400 && !$notDeletedException) {
+            return false;
+        }
+        switch ($response) {
+            case 401:
+                throw new \Exception('Error deleting ticket: User not authenticated');
+                break;
+
+            case 403:
+                throw new \Exception('Error deleting ticket: Permission denied');
+                break;
+
+            case 404:
+                throw new \Exception('Error deleting ticket: Does not exist');
+                break;
+
+            case 400:
+            default:
+                throw new \Exception('Error deleting ticket');
+        }
+        return true;
     }
     /**
-     *
+     * Retrieves the specifed ticket
+     * @param string $issue_key The ticket to be returned
+     * @param bool $notFoundException Flag indicating if an exception should be
+            thrown when a ticket cannot be returned.
+     * @return StdClass The object containing the ticket
+     */
+    public function getTicket($issue_key, $notFoundException = false)
+    {
+        $result = $this->sendRequest('issue/' . $issue_key, array(), 'GET');
+        if ($this->getLastResponseCode() !== 204 && $notFoundException) {
+            throw new \Exception('Ticket could not be returned');
+        }
+        return $result;
+    }
+    /**
+     * Adds a comment to the specified ticket
+     * @param string $issue_key The ticket to be updated
+     * @param string $text The markdown supported comment to add
+     # @param string[] The timestamp the comment was added
      */
     public function addComment($issue_key, $text, $visibility = null)
     {
         $result = $this->sendRequest(
             'issue/' . $issue_key . '/comment', 
             array(
-                'body' => $text
+                'body' => $text,
+                'visibility' => $visibility
             ),
             'POST'
         );
-        if ($this->getLastResponseCode() < 300) {
-            return array('updated' => $result->updated);
+        if ($this->getLastResponseCode() >= 300) {
+            throw new \Exception('Failed to add comment.');
         }
-        return array('error' => $this->getResult());
-    }
-    /**
-     *
-     */
-    public function getTicket($issue_key)
-    {
-        return $this->sendRequest('issue/' . $issue_key, array());
+        return array('updated' => $result->updated);
     }
     /**
      *
