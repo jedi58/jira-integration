@@ -105,7 +105,7 @@ The result returned is an array with the only element being the timestamp the co
 ```php
 $jira = new JiraIntegration('https://jira.atlassian.com');
 $jira->authenticate('user', 'password');
-
+$projects = $jira->getProjects();
 ```
 
 
@@ -114,7 +114,7 @@ $jira->authenticate('user', 'password');
 ```php
 $jira = new JiraIntegration('https://jira.atlassian.com');
 $jira->authenticate('user', 'password');
-
+$issue_types = $jira->getIssueTypes();
 ```
 
 
@@ -123,7 +123,7 @@ $jira->authenticate('user', 'password');
 ```php
 $jira = new JiraIntegration('https://jira.atlassian.com');
 $jira->authenticate('user', 'password');
-
+$jira->getProjectIssueAvailableConfig('SUP');
 ```
 
 
@@ -132,7 +132,7 @@ $jira->authenticate('user', 'password');
 ```php
 $jira = new JiraIntegration('https://jira.atlassian.com');
 $jira->authenticate('user', 'password');
-
+$jira->getCustomFieldOption(1);
 ```
 
 
@@ -141,5 +141,5 @@ $jira->authenticate('user', 'password');
 ```php
 $jira = new JiraIntegration('https://jira.atlassian.com');
 $jira->authenticate('user', 'password');
-
+$jira->getAssignableUsers();
 ```
