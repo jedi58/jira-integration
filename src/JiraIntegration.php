@@ -22,6 +22,10 @@ class JiraIntegration
      */
     protected $last_response_code = 0;
     /**
+     * Flag indicating functions should throw exception on API failure
+     */
+    protected $shouldExceptionOnError = false;
+    /**
      * Default constructior for JiraIntegration
      * @param string $url The URL of the Jira API to connect to
      * @param string $username The username to connect with
@@ -72,6 +76,14 @@ class JiraIntegration
         return $this->last_response_code;
     }
     /**
+     * Returns the value of {@link shouldExceptionOnError}
+     * @return bool The value of {@link shouldExceptionOnError}
+     */
+    public function getShouldExceptionOnError ()
+    {
+        return $this->shouldExceptionOnError;
+    }
+    /**
      * Sets the value of {@link api_base_url}
      * @param string $value The URL to set {@link api_base_url} to
      */
@@ -81,7 +93,7 @@ class JiraIntegration
     }
     /**
      * Sets the value of {@link api_auth}
-     @param string $value The string to set {@link api_auth} to
+     * @param string $value The string to set {@link api_auth} to
      */
     public function setApiAuth($value)
     {
@@ -106,6 +118,14 @@ class JiraIntegration
         $this->last_response_code = (int) $value;
     }
     /**
+     * Sets the value of {@link shouldExceptionOnError}
+     * @param bool $value The value to set for {@link shouldExceptionOnError}
+     */
+    public function setsSouldExceptionOnError($value)
+    {
+        $this->shouldExceptionOnError = (bool) $value;
+    }
+    /**
      * Combines the username and password and sets {@link api_auth} to
      * the base64 encoded result
      * @param string $username The username to use
@@ -120,11 +140,11 @@ class JiraIntegration
      * @param string[] Settings to apply to the ticket
      * @return string[] The key of the created ticked. e.g. DEMO-123
      */
-    public function createTicket($data = array(), $notCreatedException = false)
+    public function createTicket($data = array())
     {
         $result = $this->sendRequest('issue', $data, 'POST');
         if ($this->getLastResponseCode() !== 201) {
-            if ($notCreatedException) {
+            if ($this->getShouldExceptionOnError()) {
                 throw new \Exception('Failed to create Jira ticket');
             } else {
                 return array('key' => null);
@@ -182,11 +202,15 @@ class JiraIntegration
      * @param string[] $data The changes to make to the ticket
      * @return bool Returns TRUE if successful
      */
-    public function updateTicket($issue_key, $data, $notUpdatedException = false)
+    public function updateTicket($issue_key, $data)
     {
-        $result = $this->sendRequest('issue/' . $issue_key, $data, 'PUT');
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key),
+            $data,
+            'PUT'
+        );
         if ($this->getLastResponseCode() !== 204) {
-            if ($notUpdatedException) {
+            if ($this->getShouldExceptionOnError()) {
                 throw new \Exception('Failed to update Jira ticket');
             } else {
                 return false;
@@ -200,73 +224,232 @@ class JiraIntegration
      * @param bool $remove_subtasks Flag indicating if sub-tasks can be removed
      * @return bool Returns TRUE if deletion was successful
      */
-    public function deleteTicket($issue_key, $remove_subtasks = false, $notDeletedException = false)
+    public function deleteTicket($issue_key, $remove_subtasks = false)
     {
         $result = $this->sendRequest(
-            'issue/' . $issue_key,
+            'issue/' . urlencode($issue_key),
             array(
                 'deleteSubtasks' => (string) $remove_subtasks 
             ),
             'DELETE'
         );
         $response = $this->getLastResponseCode();
-        if ($response < 400 && !$notDeletedException) {
-            return false;
+        if ($response === 204) {
+            return true;
+        } elseif ($this->getShouldExceptionOnError()) {
+            switch ($response) {
+                case 401:
+                    throw new \Exception('Error deleting ticket: User not authenticated');
+                    break;
+
+                case 403:
+                    throw new \Exception('Error deleting ticket: Permission denied');
+                    break;
+
+                case 404:
+                    throw new \Exception('Error deleting ticket: Does not exist');
+                    break;
+
+                case 400:
+                default:
+                    throw new \Exception('Error deleting ticket');
+            }
         }
-        switch ($response) {
-            case 401:
-                throw new \Exception('Error deleting ticket: User not authenticated');
-                break;
-
-            case 403:
-                throw new \Exception('Error deleting ticket: Permission denied');
-                break;
-
-            case 404:
-                throw new \Exception('Error deleting ticket: Does not exist');
-                break;
-
-            case 400:
-            default:
-                throw new \Exception('Error deleting ticket');
-        }
-        return true;
+        return false;
     }
     /**
      * Retrieves the specifed ticket
      * @param string $issue_key The ticket to be returned
-     * @param bool $notFoundException Flag indicating if an exception should be
-            thrown when a ticket cannot be returned.
      * @return StdClass The object containing the ticket
      */
-    public function getTicket($issue_key, $notFoundException = false)
+    public function getTicket($issue_key)
     {
-        $result = $this->sendRequest('issue/' . $issue_key, array(), 'GET');
-        if ($this->getLastResponseCode() !== 204 && $notFoundException) {
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key),
+            array(),
+            'GET'
+        );
+        if ($this->getLastResponseCode() !== 204
+                && $this->getShouldExceptionOnError()) {
             throw new \Exception('Ticket could not be returned');
         }
         return $result;
     }
     /**
+     * Assigns the specified user to the ticket. A name should be passed here
+     * otherwise it will assign the automatic assignee. Using null wil make
+     * the ticket unassigned
+     * @param string $issue_key The ticket to change assignee of
+     * @param string $assignee The name of the user to assign the ticket to
+     * @param bool The result of attempting to assign the user
+     */
+    public function assignTicket($issue_key, $assignee = '-1')
+    {
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . '/assignee',
+            array(
+                'name' => $assignee
+            ),
+            'PUT'
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 204) {
+            return true;
+        } elseif ($this->getShouldExceptionOnError()) {
+            switch ($response) {
+                case 401:
+                    throw new \Exception('Error assigning user: Permission denied');
+                    break;
+
+                case 404:
+                    throw new \Exception('Error assigning user: Issue or user not found');
+                    break;
+
+                case 400:
+                default:
+                    throw new \Exception('Error assigning user to ticket');
+            }
+        }
+        return false;
+    }
+    /**
      * Adds a comment to the specified ticket
      * @param string $issue_key The ticket to be updated
      * @param string $text The markdown supported comment to add
-     # @param string[] The timestamp the comment was added
+     * @param string[] Optional array of visibility details for comment
+     * @return string[] The timestamp the comment was added
      */
     public function addComment($issue_key, $text, $visibility = null)
     {
+        $data - array('body' => $text);
+        if (!empty($visibility)) {
+            $data['visibility'] = $visibility;
+        }
         $result = $this->sendRequest(
-            'issue/' . $issue_key . '/comment', 
-            array(
-                'body' => $text,
-                'visibility' => $visibility
-            ),
+            'issue/' . urlencode($issue_key) . '/comment', 
+            $data,
             'POST'
         );
         if ($this->getLastResponseCode() >= 300) {
-            throw new \Exception('Failed to add comment.');
+            if ($this->getShouldExceptionOnError()) {
+                throw new \Exception('Failed to add comment.');
+            } else {
+                return array('updated' => null);
+            }
         }
         return array('updated' => $result->updated);
+    }
+    /**
+     * Updated the specified comment
+     * @param string $issue_key The ticket to be updated
+     * @param string $comment_id The ID of the comment to update
+     * @param string $text The markdown supported comment to add
+     * @param string[] Optional array of visibility details for comment
+     * @return string[] The timestamp the comment was updated
+     */
+    public function updateComment(
+        $issue_key,
+        $comment_id,
+        $text,
+        $visibility = null,
+        $expand = false
+    ) {
+        $data - array('body' => $text);
+        if (!empty($visibility)) {
+            $data['visibility'] = $visibility;
+        }
+        if ($expand) {
+            $data['expand'] = 'true';
+        }
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . 
+                '/comment/' . urlencode($comment_id),
+            $data,
+            'PUT'
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 200) {
+            return array('updated' => $result->updated);
+        } elseif ($this->getShouldExceptionOnError()) {
+            throw new \Exception('Failed to update comment');
+        }
+        return array('updated' => $result->updated);
+    }
+    /**
+     * Deletes the specified comment from the issue
+     * @param string $issue_key The ticket to be updated
+     * @param string $comment_id The ID of the comment to update
+     * @return bool The result of deleting the comment from the issue
+     */
+    public function deleteComment($issue_key, $comment_id)
+    {
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . 
+                '/comment/' . urlencode($comment_id),
+            array(),
+            'DELETE'
+        );
+        if ($response === 204) {
+            return true;
+        } elseif ($this->getShouldExceptionOnError()) {
+            throw new \Exception('Failed to update comment');
+        }
+        return false;
+    }
+    /**
+     * Returns an array of all commments for the specified issue
+     * @param string $issue_key The issue to get comments for
+     * @param bool $expand Flag indicating if comment should be HTML
+     * @return string[] Array of comments for the given issue
+     */
+    public function getAllComments($issue_key, $expand = false)
+    {
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . '/comment',
+            $expand ? array('expand' => 'true') : array(),
+            'GET'
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 200) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            throw new \Exception('Ticket comments could not be returned');
+        }
+        return array(
+            'startAt' => 0,
+            'maxResults' => 0,
+            'total' => 0,
+            'comments' => array()
+        );
+    }
+    /**
+     * Returns a specific comment for an issue
+     * @param string $issue_key The issue to get comments for
+     * @param string $comment_id The ID of the comment to retrieve
+     * @param bool $expand Flag indicating if comment should be HTML
+     * @return string[] Array of comments for the given issue limited by
+     *                   {@link comment_id}
+     */
+    public function getComment($issue_key, $comment_id, $expand = false)
+    {
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . 
+                '/comment/' . urlencode($comment_id),
+            $expand ? array('expand' => 'true') : array(),
+            'GET'
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 200) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            throw new \Exception('Ticket comments could not be returned');
+        }
+        return array(
+            'startAt' => 0,
+            'maxResults' => 0,
+            'total' => 0,
+            'comments' => array()
+        );
     }
     /**
      *
