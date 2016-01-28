@@ -1,0 +1,21 @@
+{
+    "name": "Inachis/JiraIntegation",
+    "type": "library",
+    "description": "Inachis Framweork - Jira Integration component",
+    "keywords": [],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David G. Paul"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9"
+    },
+    "autoload": {
+        "psr-4": { "Inachis\\Component\\JiraIntegration\\": "src/" },
+        "exclude-from-classmap": [
+            "/tests/"
+        ]
+    }
+}
