@@ -94,11 +94,11 @@ abstract class JiraConnection {
     {
         $ch = curl_init();
         curl_setopt(
-                $ch, CURLOPT_URL, $this->$authentication->getApiBaseUrl() . '/rest/api/latest/' . $url
+                $ch, CURLOPT_URL, $this->authentication->getApiBaseUrl() . '/rest/api/latest/' . $url
         );
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-type: application/json',
-            'Authorization: Basic ' . $this->$authentication->getApiAuth(),
+            'Authorization: Basic ' . $this->authentication->getApiAuth(),
         ));
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
