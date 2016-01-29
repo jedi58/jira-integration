@@ -5,6 +5,21 @@ namespace Inachis\Component\JiraIntegration;
 use Inachis\Component\JiraIntegration\JiraConnection;
 
 class Comment extends JiraConnection {
+	/**
+	 * @var Authentication Reference to instance of self
+	 */
+	private static $instance;
+	/**
+	 * Returns a singleton instance of this class
+	 * @return Issue The singleton instance
+	 */
+	public static function getInstance()
+	{
+		if (null === static::$instance) {
+			static::$instance = new static();
+		}
+		return static::$instance;
+	}
     /**
      * Adds a comment to the specified ticket
      * @param string $issue_key The ticket to be updated

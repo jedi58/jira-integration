@@ -5,6 +5,21 @@ namespace Inachis\Component\JiraIntegration;
 use Inachis\Component\JiraIntegration\JiraConnection;
 
 class Issue extends JiraConnection {
+	/**
+	 * @var Authentication Reference to instance of self
+	 */
+	private static $instance;
+	/**
+	 * Returns a singleton instance of this class
+	 * @return Issue The singleton instance
+	 */
+	public static function getInstance()
+	{
+		if (null === static::$instance) {
+			static::$instance = new static();
+		}
+		return static::$instance;
+	}
     /**
      * Creates a new ticket
      * @param string[] Settings to apply to the ticket
@@ -181,5 +196,29 @@ class Issue extends JiraConnection {
             }
         }
         return false;
+    }
+    /**
+     *
+     */
+    public function getIssueTypes()
+    {
+        return $this->sendRequest('issuetype');
+    }
+    /**
+     *
+     */
+    public function getProjectIssueAvailableConfig($projectId)
+    {
+        return $this->sendRequest(
+            'issue/createmeta?projectKeys=' . urlencode($projectId) .
+            '&issuetypeName=Bug&expand=projects.issuetypes.fields'
+        );
+    }
+    /**
+     *
+     */
+    public function getCustomFieldOption($field_id)
+    {
+        return $this->sendRequest('customFieldOption/' . $field_id);
     }
 }
