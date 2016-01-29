@@ -5,7 +5,8 @@ The idea behind this class is that you can use this to pull out information to b
 
 ## Usage
 
-1. [Creating a ticket (Simple)](#createSimple)
+1. [Providing authentication details for the Jira API](#authentication)
+2. [Creating a ticket (Simple)](#createSimple)
 2. [Creating a ticket](#create)
 4. [Updating a ticket](#update)
 5. [Adding comments to tickets](#addComment)
@@ -16,13 +17,24 @@ The idea behind this class is that you can use this to pull out information to b
 10. [Retrieving a custom field](#getCustomFieldOption)
 11. [Retrieve a list of assignable users](#getAssignableUsers)
 
+
+<a name="authentication"></a>
+### Providing authentication details for the Jira API
+All Jira API functions require themselves to be authenticated. Your application must first use the `Authentication` object to provide these details.
+```php
+$auth = Authentication::getInstance(
+    'https://jira.atlassian.com'
+    'user','password'
+);
+```
+These details will then be automatically used when utilising any of the below objects.
+
+
 <a name="createSimple"></a>
 ### Creating a ticket (Simple)
 Creates a new ticket and assigns it to the specified project (in the below example this is `DEMO`).
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$case_id = $jira->simpleCreateTicket(
+$case_id = Issue::getInstance()->simpleCreateTicket(
     'DEMO',
     'A test ticket',
     'There is an issue here - please fix it',
@@ -41,9 +53,7 @@ This can also take optional parameters for setting the type of ticket, time trac
 ### Creating a ticket
 This is a more versatile version of the function for creating a ticket in Jira. It will only take an array as it's parameter and expects you to pass in everything required.
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$case_id = $jira->createTicket(array('fields' => array(
+$case_id = Issue::getInstance()->createTicket(array('fields' => array(
     'project' => array(
         'key' => 'DEMO'
     ),
@@ -62,9 +72,7 @@ As with the `simpleCreateTicket` function this will return the ID of the ticket 
 ### Updating a ticket
 This is a more versatile way of updating a ticket's properties - all changes must be passed in to the array.
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$case_id = $jira->updateTicket('DEMO-1234', array('fields' => array(
+$case_id = Issue::getInstance()->updateTicket('DEMO-1234', array('fields' => array(
     'summary' => 'This is the new description of the ticket'
 )));
 ```
@@ -79,9 +87,7 @@ If a ticket has sub-tasks then it will be necessary to pass `true` into this fun
 ### Retrieving a specific ticket
 This will return an `StdClass` object containing the ticket and all it's properties.
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$ticket = $jira->getTicket('DEMO-123');
+$ticket = Issue::getInstance()->getTicket('DEMO-123');
 ```
 
 
@@ -89,9 +95,7 @@ $ticket = $jira->getTicket('DEMO-123');
 ###Adding comments to tickets
 This will add a comment to the ticket.
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$jira->addComment('DEMO-123', 'This is a comment!', array(
+Comment::getInstance()->('DEMO-123', 'This is a comment!', array(
     'type' => 'role',
     'value' => 'Administrators'
 ));
@@ -103,43 +107,33 @@ The result returned is an array with the only element being the timestamp the co
 <a name="getAllProjects"></a>
 ###Retrieving a list of all projects
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$projects = $jira->getProjects();
+$projects = Project::getInstance()->getProjects();
 ```
 
 
 <a name="getAllIssueTypes"></a>
 ###Retrieving a list of all issue types
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$issue_types = $jira->getIssueTypes();
+$issue_types = Issue::getInstance()->getIssueTypes();
 ```
 
 
 <a name="getProjectIssueAvailableConfig"></a>
 ###Retrieving available config options for a project
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$jira->getProjectIssueAvailableConfig('SUP');
+$available_config = Issue::getInstance()->getProjectIssueAvailableConfig('SUP');
 ```
 
 
 <a name="getCustomFieldOption"></a>
 ###Retrieving a custom field
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$jira->getCustomFieldOption(1);
+$custom = Issue::getInstance()->getCustomFieldOption(1);
 ```
 
 
 <a name="getAssignableUsers"></a>
 ###Retrieve a list of assignable users
 ```php
-$jira = new JiraIntegration('https://jira.atlassian.com');
-$jira->authenticate('user', 'password');
-$jira->getAssignableUsers();
+$users = User::getInstance()->getAssignableUsers();
 ```
