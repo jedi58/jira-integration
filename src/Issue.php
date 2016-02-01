@@ -200,13 +200,6 @@ class Issue extends JiraConnection {
     /**
      *
      */
-    public function getIssueTypes()
-    {
-        return $this->sendRequest('issuetype');
-    }
-    /**
-     *
-     */
     public function getProjectIssueAvailableConfig($projectId)
     {
         return $this->sendRequest(
