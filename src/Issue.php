@@ -219,6 +219,29 @@ class Issue extends JiraConnection {
      */
     public function getCustomFieldOption($field_id)
     {
-        return $this->sendRequest('customFieldOption/' . $field_id);
+        return $this->sendRequest('customFieldOption/' . urlencode($field_id));
+    }
+    /**
+     *
+     */
+    public function editMetadata($issue_key, $data)
+    {
+        if (!isset($data['fields'])) {
+            $data = array(
+                'fields' => $data
+            );
+        }
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . '/editmeta',
+            $data,
+            'GET'
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 204) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            throw new \Exception('Issue metadata not found');
+        }
+        return array();
     }
 }
