@@ -23,6 +23,7 @@ class Issue extends JiraConnection {
     /**
      * Creates a new ticket
      * @param string[] Settings to apply to the ticket
+     * @throws \Exception
      * @return string[] The key of the created ticked. e.g. DEMO-123
      */
     public function createTicket($data = array())
@@ -85,6 +86,7 @@ class Issue extends JiraConnection {
      * Updates the specified Jira ticket
      * @param string $issue_key The ticket to be update
      * @param string[] $data The changes to make to the ticket
+     * @throws \Exception
      * @return bool Returns TRUE if successful
      */
     public function updateTicket($issue_key, $data)
@@ -107,6 +109,7 @@ class Issue extends JiraConnection {
      * Deletes the specified ticket
      * @param string $issue_key The ticket to be removed
      * @param bool $remove_subtasks Flag indicating if sub-tasks can be removed
+     * @throws \Exception
      * @return bool Returns TRUE if deletion was successful
      */
     public function deleteTicket($issue_key, $remove_subtasks = false)
@@ -145,6 +148,7 @@ class Issue extends JiraConnection {
     /**
      * Retrieves the specifed ticket
      * @param string $issue_key The ticket to be returned
+     * @throws \Exception
      * @return StdClass The object containing the ticket
      */
     public function getTicket($issue_key)
@@ -166,7 +170,8 @@ class Issue extends JiraConnection {
      * the ticket unassigned
      * @param string $issue_key The ticket to change assignee of
      * @param string $assignee The name of the user to assign the ticket to
-     * @param bool The result of attempting to assign the user
+     * @throws \Exception
+     * @return bool The result of attempting to assign the user
      */
     public function assignTicket($issue_key, $assignee = '-1')
     {
@@ -198,7 +203,9 @@ class Issue extends JiraConnection {
         return false;
     }
     /**
-     *
+     * Returns an array of issue config options available for a given project
+     * @param string $proejctId The ID of the project to get issue config options for
+     * @return SimpleXML The result of requesting config options
      */
     public function getProjectIssueAvailableConfig($projectId)
     {
@@ -215,7 +222,11 @@ class Issue extends JiraConnection {
         return $this->sendRequest('customFieldOption/' . urlencode($field_id));
     }
     /**
-     *
+     * Updates the metadata for the specified issue
+     * @param string $issue_key The identifier for the issue to be modified
+     * @param string[] The array of changes to make to the issues metadata
+     * @throws \Exception
+     * @return SimpleXML The result of attempting to edit the metadata
      */
     public function editMetadata($issue_key, $data)
     {
@@ -234,6 +245,154 @@ class Issue extends JiraConnection {
             return $result;
         } elseif ($this->getShouldExceptionOnError()) {
             throw new \Exception('Issue metadata not found');
+        }
+        return array();
+    }
+    /**
+     * 
+     * @param string $issue_key The issue to add the worklog update to
+     * @param string|int $timeSpent The amount of time spent on the current issue
+     * @param string[] $options Any additional options that should be applied
+     * @return SimpleXML The result of adding the worklog entry
+     * @throws \Exception
+     */
+    public function addWorklog($issue_key, $timeSpent = '', $options = array())
+    {
+        $timeKey = is_int($timeSpent) ? 'timeSpentSeconds' : 'timeSpent';
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . '/worklog',
+            array_merge(
+                array(
+                    $timeKey => $timeSpent
+                ),
+                $options
+            ),
+            'POST'
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 201) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            switch ($response) {
+                case 400:
+                    throw new \Exception('Worklog addition invalid');
+                    break;
+                case 403:
+                    throw new \Exception('Permission denied adding worklog');
+                    break;
+            }
+        }
+        return array();
+    }
+    /**
+     * Updates an existing worklog entry
+     * @param string $issue_key The issue to add the worklog update to
+     * @param string $worklog_key The ID of the worklog entry to update
+     * @param string|int $timeSpent The amount of time spent on the current issue
+     * @param string[] $options Any additional options that should be applied
+     * @return SimpleXML The result of updating the worklog entry
+     * @throws \Exception
+     */
+    public function updateWorklog(
+            $issue_key,
+            $worklog_key,
+            $timeSpent = '',
+            $options = array()
+    ) {
+        $timeKey = is_int($timeSpent) ? 'timeSpentSeconds' : 'timeSpent';
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . 
+                '/worklog/' . urlencode($worklog_key),
+            array_merge(
+                array(
+                    $timeKey => $timeSpent
+                ),
+                $options
+            ),
+            'PUT'
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 200) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            switch ($response) {
+                case 400:
+                    throw new \Exception('Worklog update invalid');
+                    break;
+                case 403:
+                    throw new \Exception('Permission denied updating worklog');
+                    break;
+            }
+        }
+        return array();
+    }
+    /**
+     * Deletes a specific worklog entry
+     * @param string $issue_key The issue to add the worklog update to
+     * @param string $worklog_key The ID of the worklog entry to update
+     * @return SimpleXML The result of updating the worklog entry
+     * @throws \Exception
+     */
+    public function deleteWorklog($issue_key, $worklog_key)
+    {
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . 
+                '/worklog/' . urlencode($worklog_key),
+            array(),
+            'DELETE'
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 204) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            switch ($response) {
+                case 400:
+                    throw new \Exception('Worklog deletion invalid');
+                    break;
+                case 403:
+                    throw new \Exception('Permission denied deleting worklog');
+                    break;
+            }
+        }
+        return array();
+    }
+    /**
+     * Returns a specific worklog entry for a given Issue
+     * @param string $issue_key The issue to add the worklog update to
+     * @param string $worklog_key The ID of the worklog entry to update
+     * @return SimpleXML The result of updating the worklog entry
+     * @throws \Exception
+     */
+    public function getWorklog($issue_key, $worklog_key)
+    {
+        $result = $this->sendRequest(
+            'issue/' . urlencode($issue_key) . 
+                '/worklog/' . urlencode($worklog_key)
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 200) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            throw new \Exception('Worklog entry not found for issue ' . 
+                    $issue_key);
+        }
+        return array();
+    }
+    /**
+     * Returns all worklog entries for a given issue
+     * @param string $issue_key The issue to add the worklog update to
+     * @return SimpleXML The result of updating the worklog entry
+     * @throws \Exception
+     */
+    public function getAllWorklog($issue_key)
+    {
+        $result = $this->sendRequest('issue/' . urlencode($issue_key) . 
+                '/worklog/');
+        $response = $this->getLastResponseCode();
+        if ($response === 200) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            throw new \Exception('Worklog not found for issue ' . $issue_key);
         }
         return array();
     }
