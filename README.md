@@ -1,4 +1,7 @@
 # JiraIntegration
+
+[![Build Status](https://travis-ci.org/jedi58/JiraIntegration.svg?branch=master)](https://travis-ci.org/jedi58/JiraIntegration)
+
 A PHP component for interacting with the Atlassian Jira API, issue and project tracking software used by Agile teams.
 
 The idea behind this class is that you can use this to pull out information to be used on your own website(s), or have your own web applications interact with it. The Jira API documentation this is developed against is: https://docs.atlassian.com/jira/REST/latest/
