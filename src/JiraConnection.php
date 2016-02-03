@@ -88,24 +88,30 @@ abstract class JiraConnection {
      * @param string $url The path  to determine request being made
      * @param string[] $data The data to use with the request
      * @param string $method The type of request to make. Default: GET
+     * @param bool $multipart Flag indicating if this is a multipart/attachment request
      * @return StdClass Object containing the returned data
      */
-    protected function sendRequest($url, $data = array(), $method = 'GET')
+    protected function sendRequest($url, $data = array(), $method = 'GET', $multipart = false)
     {
         $ch = curl_init();
         curl_setopt(
                 $ch, CURLOPT_URL, $this->authentication->getApiBaseUrl() . '/rest/api/latest/' . $url
         );
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        $headers = array(
             'Content-type: application/json',
             'Authorization: Basic ' . $this->authentication->getApiAuth(),
-        ));
+        );
+        if ($multipart) {
+            $headers[0] = 'Content-type: multipart/form-data';
+            $headers[] = 'X-Atlassian-Token: no-check';
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         if ($method == 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $multipart ? $data : json_encode($data));
         } else {
             curl_setopt($ch, CURLOPT_HTTPGET, $data);
         }

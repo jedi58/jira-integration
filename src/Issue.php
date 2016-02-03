@@ -396,4 +396,29 @@ class Issue extends JiraConnection {
         }
         return array();
     }
+    /**
+     * Attaches a provided file to the speciifed issue
+     * @param string $issue_key The identifier of the issue to attach the file to
+     * @param string $filepath The system path of the file to upload
+     * @return SimpleXML The result of uploading the file
+     */
+    public function attachFile($issue_key, $filepath)
+    {
+        $result = $this->sendRequest(
+            'issue/' . $issue_key . '/attachments',
+            array(
+                'filename' => 'test',
+                'file' => '@' . $filepath . ';filename=' . basename($filepath)
+            ),
+            'POST',
+            true
+        );
+        $response = $this->getLastResponseCode();
+        if ($response === 200) {
+            return $result;
+        } elseif ($this->getShouldExceptionOnError()) {
+            throw new \Exception('Upload failed');
+        }
+        return array();
+    }
 }
