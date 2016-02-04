@@ -10,6 +10,7 @@ CHANGELOG
 1.0.0
 -----
 
+ * added `Issue` resource with functions for adding, updating, removing and getting issues
  * added `Comment` resource with functions for adding, updating, removing and getting comments
  * added `Permissions` resource with function for getting all and user specific permissions
  * added `Project` resource with functions for getting all projects
