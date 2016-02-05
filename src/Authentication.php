@@ -13,12 +13,12 @@ class Authentication {
     /**
      * @var string The URL where the Jira API is located
      */
-    protected $api_base_url = '';
+    protected $apiBaseUrl = '';
     /**
      * @var string The base64 encoded username:password pair to use for
      *		authentication
      */
-    protected $api_auth = '';
+    protected $apiAuth = '';
 	/**
 	 * Returns a singleton instance of this class
 	 * @param string $url The URL of the Jira API
@@ -67,7 +67,7 @@ class Authentication {
      */
     public function getApiBaseUrl()
     {
-        return $this->api_base_url;
+        return $this->apiBaseUrl;
     }
     /**
      * Returns the value of {@link api_auth}
@@ -75,7 +75,7 @@ class Authentication {
      */
     public function getApiAuth()
     {
-        return $this->api_auth;
+        return $this->apiAuth;
     }
     /**
      * Sets the value of {@link api_base_url}
@@ -83,7 +83,7 @@ class Authentication {
      */
     public function setApiBaseUrl($value)
     {
-        $this->api_base_url = $value;
+        $this->apiBaseUrl = $value;
     }
     /**
      * Sets the value of {@link api_auth}
@@ -91,7 +91,7 @@ class Authentication {
      */
     public function setApiAuth($value)
     {
-        $this->api_auth = $value;
+        $this->apiAuth = $value;
     }
     /**
      * Combines the username and password and sets {@link api_auth} to
