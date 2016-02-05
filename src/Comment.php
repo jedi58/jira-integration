@@ -78,7 +78,7 @@ class Comment extends JiraConnection {
      * @param string $commentId The ID of the comment to update
      * @return stdClass The result of deleting the comment from the issue
      */
-    public function delete($issue_key, $commentId)
+    public function delete($issueKey, $commentId)
     {
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) . 
@@ -91,30 +91,50 @@ class Comment extends JiraConnection {
      * Returns a specific comment for an issue
      * @param string $issueKey The issue to get comments for
      * @param string $commentId The ID of the comment to retrieve
-     * @param bool $expand Flag indicating if comment should be HTML
      * @return stdClass The requested comment
      */
-    public function get($issueKey, $commentId, $expand = false)
+    public function get($issueKey, $commentId)
+    {
+        return $this->sendRequest(
+            'issue/' . urlencode($issueKey) . 
+                '/comment/' . urlencode($commentId)
+        );
+    }
+    /**
+     * Returns a specific comment for an issue
+     * @param string $issueKey The issue to get comments for
+     * @param string $commentId The ID of the comment to retrieve
+     * @return stdClass The requested comment
+     */
+    public function getAsHtml($issueKey, $commentId)
     {
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) . 
                 '/comment/' . urlencode($commentId),
-            $expand ? array('expand' => 'true') : array(),
-            'GET'
+            array('expand' => 'true')
         );
     }
     /**
      * Returns an array of all commments for the specified issue
      * @param string $issueKey The issue to get comments for
-     * @param bool $expand Flag indicating if comment should be HTML
      * @return stdClass The comments for the given issue
      */
     public function getAll($issueKey, $expand = false)
     {
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) . '/comment',
-            $expand ? array('expand' => 'true') : array(),
-            'GET'
+        );
+    }
+    /**
+     * Returns an array of all commments for the specified issue
+     * @param string $issueKey The issue to get comments for
+     * @return stdClass The comments for the given issue
+     */
+    public function getAllAsHtml($issueKey)
+    {
+        return $this->sendRequest(
+            'issue/' . urlencode($issueKey) . '/comment',
+            array('expand' => 'true')
         );
     }
 }
