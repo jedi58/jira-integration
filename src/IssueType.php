@@ -46,15 +46,16 @@ class IssueType extends JiraConnection
     }
     /**
      * Updates an existing issue type
+     * @param string $typeKey The unique identifier for the issue type
      * @param string $name The new name of the  issue type
      * @param string $description The new descriptive text for the issue type
      * @param string $type The new type for issue type
      * @return stdClass The result of updating the issue type
      */
-    public function update($type_key, $name, $description = '', $type = '')
+    public function update($typeKey, $name, $description = '', $type = '')
     {
         return $this->sendRequest(
-            'issuetype/' . urlencode($type_key),
+            'issuetype/' . urlencode($typeKey),
             array(
                 'name' => $name,
                 'description' => $description,
@@ -65,25 +66,25 @@ class IssueType extends JiraConnection
     }
     /**
      * Deletes a specific issue type
-     * @param string $type_key The key identifying the issue type
+     * @param string $typeKey The key identifying the issue type
      * @return stdClass The result of deleting the issue type
      */
-    public function delete($type_key)
+    public function delete($typeKey)
     {
         return $this->sendRequest(
-            'issuetype/' . urlencode($type_key),
+            'issuetype/' . urlencode($typeKey),
             array(),
             'DELETE'
         );
     }
     /**
      * Returns a specific issue type
-     * @param string $type_key The identifier for the issue type
+     * @param string $typeKey The identifier for the issue type
      * @return stdClass The object containing the issue type
      */
-    public function get($type_key)
+    public function get($typeKey)
     {
-        return $this->sendRequest('issuetype/' . urlencode($type_key));
+        return $this->sendRequest('issuetype/' . urlencode($typeKey));
     }
     /**
      * Returns an object containing all issue types available
