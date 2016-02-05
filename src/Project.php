@@ -3,6 +3,7 @@
 namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\JiraConnection;
+
 /**
  * Project object for interacting with the project namespace of the Jira API
  */
@@ -24,19 +25,19 @@ class Project extends JiraConnection {
     }
     /**
      * Creates a new project in Jira
-     * @param string $key The "key" for the project. 10 chars max
+     * @param string $projectKey The "key" for the project. 10 chars max
      * @param string $name The name of the project to create. 80chars max
      * @param string $lead The name of the project lead
      * @param string[] $options Array of additional options to apply to project
      * @return stdClass The result of creating the project
      */
-    public function createProject($key, $name, $lead, $options = array())
+    public function createProject($projectKey, $name, $lead, $options = array())
     {
         return $this->sendRequest(
             'project',
             array_merge(
                 array(
-                    'key' => $key,
+                    'key' => $projectKey,
                     'name' => $name,
                     'lead' => $lead
                 ),
@@ -47,41 +48,41 @@ class Project extends JiraConnection {
     }
     /**
      * Updates project in Jira
-     * @param string $project_key The "key" for the project to change
+     * @param string $projectKey The "key" for the project to change
      * @param string $name The name of the project to create. 80chars max
      * @param string[] $options Array of additional options to apply to project
      * @return stdClass The result of updating the project
      */
-    public function updateProject($project_key, $name, $options = array())
+    public function updateProject($projectKey, $name, $options = array())
     {
         $options['name'] = $name;
         return $this->sendRequest(
-            'project/' . urlencode($project_key),
+            'project/' . urlencode($projectKey),
             $options,
             'PUT'
         );
     }
     /**
      * Deletes a project in Jira
-     * @param string $project_key The "key" for the project to delete
+     * @param string $projectKey The "key" for the project to delete
      * @return stdClass The result of deleting the project
      */
-    public function deleteProject($project_key)
+    public function deleteProject($projectKey)
     {
         return $this->sendRequest(
-            'project/' . urlencode($project_key),
+            'project/' . urlencode($projectKey),
             array(),
             'DELETE'
         );      
     }
     /**
      * Retrieves a project in Jira
-     * @param string $project_key The "key" for the project to return
+     * @param string $projectKey The "key" for the project to return
      * @return stdClass The requested project
      */
-    public function getProject($project_key)
+    public function getProject($projectKey)
     {
-        return $this->sendRequest('project/' . urlencode($project_key));
+        return $this->sendRequest('project/' . urlencode($projectKey));
     }
     /**
      * Returns an array of all projects from Jira
