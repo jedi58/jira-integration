@@ -80,28 +80,28 @@ class Issue extends JiraConnection
     }
     /**
      * Updates the specified Jira ticket
-     * @param string $issue_key The ticket to be update
+     * @param string $issueKey The ticket to be update
      * @param string[] $data The changes to make to the ticket
      * @return stdClass Returns TRUE if successful
      */
-    public function update($issue_key, $data)
+    public function update($issueKey, $data)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key),
+            'issue/' . urlencode($issueKey),
             $data,
             'PUT'
         );
     }
     /**
      * Deletes the specified ticket
-     * @param string $issue_key The ticket to be removed
+     * @param string $issueKey The ticket to be removed
      * @param bool $remove_subtasks Flag indicating if sub-tasks can be removed
      * @return stdClass Returns TRUE if deletion was successful
      */
-    public function delete($issue_key, $remove_subtasks = false)
+    public function delete($issueKey, $remove_subtasks = false)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key),
+            'issue/' . urlencode($issueKey),
             array(
                 'deleteSubtasks' => (string) $remove_subtasks
             ),
@@ -110,13 +110,13 @@ class Issue extends JiraConnection
     }
     /**
      * Retrieves the specifed ticket
-     * @param string $issue_key The ticket to be returned
+     * @param string $issueKey The ticket to be returned
      * @return StdClass The object containing the ticket
      */
-    public function get($issue_key)
+    public function get($issueKey)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key),
+            'issue/' . urlencode($issueKey),
             array(),
             'GET'
         );
@@ -125,14 +125,14 @@ class Issue extends JiraConnection
      * Assigns the specified user to the ticket. A name should be passed here
      * otherwise it will assign the automatic assignee. Using null wil make
      * the ticket unassigned
-     * @param string $issue_key The ticket to change assignee of
+     * @param string $issueKey The ticket to change assignee of
      * @param string $assignee The name of the user to assign the ticket to
      * @return stdClass The result of attempting to assign the user
      */
-    public function assign($issue_key, $assignee = '-1')
+    public function assign($issueKey, $assignee = '-1')
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key) . '/assignee',
+            'issue/' . urlencode($issueKey) . '/assignee',
             array(
                 'name' => $assignee
             ),
@@ -141,14 +141,14 @@ class Issue extends JiraConnection
     }
     /**
      * Attaches a provided file to the speciifed issue
-     * @param string $issue_key The identifier of the issue to attach the file to
+     * @param string $issueKey The identifier of the issue to attach the file to
      * @param string $filepath The system path of the file to upload
      * @return stdClass The result of uploading the file
      */
-    public function attachFile($issue_key, $filepath)
+    public function attachFile($issueKey, $filepath)
     {
         return $this->sendRequest(
-            'issue/' . $issue_key . '/attachments',
+            'issue/' . $issueKey . '/attachments',
             array(
                 'filename' => 'test',
                 'file' => '@' . $filepath . ';filename=' . basename($filepath)
@@ -171,28 +171,28 @@ class Issue extends JiraConnection
     }
     /**
      * Returns the custom field specified by it's Id
-     * @param string $field_id The Id of the custom field to return
+     * @param string $fieldId The Id of the custom field to return
      * @return stdClass The object containing the custom field
      */
-    public function getCustomFieldOption($field_id)
+    public function getCustomFieldOption($fieldId)
     {
-        return $this->sendRequest('customFieldOption/' . urlencode($field_id));
+        return $this->sendRequest('customFieldOption/' . urlencode($fieldId));
     }
     /**
      * Updates the metadata for the specified issue
-     * @param string $issue_key The identifier for the issue to be modified
+     * @param string $issueKey The identifier for the issue to be modified
      * @param string[] The array of changes to make to the issues metadata
      * @return stdClass The result of attempting to edit the metadata
      */
-    public function editMetadata($issue_key, $data)
+    public function editMetadata($issueKey, $data)
     {
         if (!isset($data['fields'])) {
             $data = array(
                 'fields' => $data
             );
         }
-        return $result = $this->sendRequest(
-            'issue/' . urlencode($issue_key) . '/editmeta',
+        return $this->sendRequest(
+            'issue/' . urlencode($issueKey) . '/editmeta',
             $data,
             'GET'
         );
