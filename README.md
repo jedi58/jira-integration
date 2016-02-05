@@ -1,6 +1,8 @@
 # JiraIntegration
 
 [![Build Status](https://travis-ci.org/jedi58/JiraIntegration.svg?branch=master)](https://travis-ci.org/jedi58/JiraIntegration)
+[![Code Climate](https://codeclimate.com/github/jedi58/JiraIntegration/badges/gpa.svg)](https://codeclimate.com/github/jedi58/JiraIntegration)
+[![Test Coverage](https://codeclimate.com/github/jedi58/JiraIntegration/badges/coverage.svg)](https://codeclimate.com/github/jedi58/JiraIntegration/coverage)
 
 A PHP component for interacting with the Atlassian Jira API, issue and project tracking software used by Agile teams.
 
