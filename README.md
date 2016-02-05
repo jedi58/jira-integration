@@ -1,6 +1,7 @@
 # JiraIntegration
 
 [![Build Status](https://travis-ci.org/jedi58/JiraIntegration.svg?branch=master)](https://travis-ci.org/jedi58/JiraIntegration)
+[![StyleCI](https://styleci.io/repos/50450886/shield)](https://styleci.io/repos/50450886)
 [![Code Climate](https://codeclimate.com/github/jedi58/JiraIntegration/badges/gpa.svg)](https://codeclimate.com/github/jedi58/JiraIntegration)
 [![Test Coverage](https://codeclimate.com/github/jedi58/JiraIntegration/badges/coverage.svg)](https://codeclimate.com/github/jedi58/JiraIntegration/coverage)
 
