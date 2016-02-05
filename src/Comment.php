@@ -4,22 +4,23 @@ namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\JiraConnection;
 
-class Comment extends JiraConnection {
-	/**
-	 * @var Authentication Reference to instance of self
-	 */
-	private static $instance;
-	/**
-	 * Returns a singleton instance of this class
-	 * @return Issue The singleton instance
-	 */
-	public static function getInstance()
-	{
-		if (null === static::$instance) {
-			static::$instance = new static();
-		}
-		return static::$instance;
-	}
+class Comment extends JiraConnection
+{
+    /**
+     * @var Authentication Reference to instance of self
+     */
+    private static $instance;
+    /**
+     * Returns a singleton instance of this class
+     * @return Issue The singleton instance
+     */
+    public static function getInstance()
+    {
+        if (null === static::$instance) {
+            static::$instance = new static();
+        }
+        return static::$instance;
+    }
     /**
      * Adds a comment to the specified ticket
      * @param string $issue_key The ticket to be updated
@@ -34,7 +35,7 @@ class Comment extends JiraConnection {
             $data['visibility'] = $visibility;
         }
         $result = $this->sendRequest(
-            'issue/' . urlencode($issue_key) . '/comment', 
+            'issue/' . urlencode($issue_key) . '/comment',
             $data,
             'POST'
         );
@@ -70,7 +71,7 @@ class Comment extends JiraConnection {
             $data['expand'] = 'true';
         }
         $result = $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
+            'issue/' . urlencode($issue_key) .
                 '/comment/' . urlencode($comment_id),
             $data,
             'PUT'
@@ -92,7 +93,7 @@ class Comment extends JiraConnection {
     public function deleteComment($issue_key, $comment_id)
     {
         $result = $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
+            'issue/' . urlencode($issue_key) .
                 '/comment/' . urlencode($comment_id),
             array(),
             'DELETE'
@@ -141,7 +142,7 @@ class Comment extends JiraConnection {
     public function getComment($issue_key, $comment_id, $expand = false)
     {
         $result = $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
+            'issue/' . urlencode($issue_key) .
                 '/comment/' . urlencode($comment_id),
             $expand ? array('expand' => 'true') : array(),
             'GET'

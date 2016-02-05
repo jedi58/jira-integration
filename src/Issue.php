@@ -4,22 +4,23 @@ namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\JiraConnection;
 
-class Issue extends JiraConnection {
-	/**
-	 * @var Authentication Reference to instance of self
-	 */
-	private static $instance;
-	/**
-	 * Returns a singleton instance of this class
-	 * @return Issue The singleton instance
-	 */
-	public static function getInstance()
-	{
-		if (null === static::$instance) {
-			static::$instance = new static();
-		}
-		return static::$instance;
-	}
+class Issue extends JiraConnection
+{
+    /**
+     * @var Authentication Reference to instance of self
+     */
+    private static $instance;
+    /**
+     * Returns a singleton instance of this class
+     * @return Issue The singleton instance
+     */
+    public static function getInstance()
+    {
+        if (null === static::$instance) {
+            static::$instance = new static();
+        }
+        return static::$instance;
+    }
     /**
      * Creates a new ticket
      * @param string[] Settings to apply to the ticket
@@ -53,7 +54,7 @@ class Issue extends JiraConnection {
         $project,
         $title,
         $description,
-        $issuetype = 'Bug', 
+        $issuetype = 'Bug',
         $timetracking = array(),
         $custom = array()
     ) {
@@ -117,7 +118,7 @@ class Issue extends JiraConnection {
         $result = $this->sendRequest(
             'issue/' . urlencode($issue_key),
             array(
-                'deleteSubtasks' => (string) $remove_subtasks 
+                'deleteSubtasks' => (string) $remove_subtasks
             ),
             'DELETE'
         );
@@ -301,7 +302,7 @@ class Issue extends JiraConnection {
     ) {
         $timeKey = is_int($timeSpent) ? 'timeSpentSeconds' : 'timeSpent';
         $result = $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
+            'issue/' . urlencode($issue_key) .
                 '/worklog/' . urlencode($worklog_key),
             array_merge(
                 array(
@@ -336,7 +337,7 @@ class Issue extends JiraConnection {
     public function deleteWorklog($issue_key, $worklog_key)
     {
         $result = $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
+            'issue/' . urlencode($issue_key) .
                 '/worklog/' . urlencode($worklog_key),
             array(),
             'DELETE'
@@ -366,14 +367,14 @@ class Issue extends JiraConnection {
     public function getWorklog($issue_key, $worklog_key)
     {
         $result = $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
+            'issue/' . urlencode($issue_key) .
                 '/worklog/' . urlencode($worklog_key)
         );
         $response = $this->getLastResponseCode();
         if ($response === 200) {
             return $result;
         } elseif ($this->getShouldExceptionOnError()) {
-            throw new \Exception('Worklog entry not found for issue ' . 
+            throw new \Exception('Worklog entry not found for issue ' .
                     $issue_key);
         }
         return array();
@@ -386,7 +387,7 @@ class Issue extends JiraConnection {
      */
     public function getAllWorklog($issue_key)
     {
-        $result = $this->sendRequest('issue/' . urlencode($issue_key) . 
+        $result = $this->sendRequest('issue/' . urlencode($issue_key) .
                 '/worklog/');
         $response = $this->getLastResponseCode();
         if ($response === 200) {
