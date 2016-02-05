@@ -3,10 +3,12 @@
 namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\JiraConnection;
+
 /**
  *
  */
-class User extends JiraConnection {
+class User extends JiraConnection
+{
     /**
      * @var Authentication Reference to instance of self
      */

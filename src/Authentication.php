@@ -1,15 +1,17 @@
 <?php
 
 namespace Inachis\Component\JiraIntegration;
+
 /**
  * Class to be used as a singleton to provide authentication for
  * requests to the Jira API
  */
-class Authentication {
-	/**
-	 * @var Authentication Reference to instance of self
-	 */
-	private static $instance;
+class Authentication
+{
+    /**
+     * @var Authentication Reference to instance of self
+     */
+    private static $instance;
     /**
      * @var string The URL where the Jira API is located
      */
@@ -19,31 +21,31 @@ class Authentication {
      *		authentication
      */
     protected $api_auth = '';
-	/**
-	 * Returns a singleton instance of this class
-	 * @param string $url The URL of the Jira API
-	 * @param string $username The username to authenticate with
-	 * @param string $password The password to authenticate with
-	 * @return Authentication The singleton instance
-	 */
-	public static function getInstance(
-		$url = '',
-		$username = '',
-		$password = ''
-	) {
-		if (null === static::$instance) {
-			static::$instance = new static($url, $username, $password);
-		}
-		return static::$instance;
-	}
-	/**
-	 * Function is protected to disallow instantiation using 
-	 * new Authentication()
-	 * @param string $url The URL of the Jira API
-	 * @param string $username The username to authenticate with
-	 * @param string $password The password to authenticate with
-	 */
-	protected function __construct(
+    /**
+     * Returns a singleton instance of this class
+     * @param string $url The URL of the Jira API
+     * @param string $username The username to authenticate with
+     * @param string $password The password to authenticate with
+     * @return Authentication The singleton instance
+     */
+    public static function getInstance(
+        $url = '',
+        $username = '',
+        $password = ''
+    ) {
+        if (null === static::$instance) {
+            static::$instance = new static($url, $username, $password);
+        }
+        return static::$instance;
+    }
+    /**
+     * Function is protected to disallow instantiation using 
+     * new Authentication()
+     * @param string $url The URL of the Jira API
+     * @param string $username The username to authenticate with
+     * @param string $password The password to authenticate with
+     */
+    protected function __construct(
         $url = '',
         $username = '',
         $password = ''
@@ -52,15 +54,19 @@ class Authentication {
         if (!empty($username) && !empty($password)) {
             $this->authenticate($username, $password);
         }
-	}
-	/**
-	 * Specified as private to disallow copying of instance
-	 */
-	private function __clone() { }
-	/**
-	 * Specified as private to disallow serialisation of instance
-	 */
-	private function __wakeup() { }
+    }
+    /**
+     * Specified as private to disallow copying of instance
+     */
+    private function __clone()
+    {
+    }
+    /**
+     * Specified as private to disallow serialisation of instance
+     */
+    private function __wakeup()
+    {
+    }
     /**
      * Returns the value of {@link api_base_url}
      * @return string The value of {@link api_base_url}

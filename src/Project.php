@@ -3,10 +3,12 @@
 namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\JiraConnection;
+
 /**
  * Project object for interacting with the project namespace of the Jira API
  */
-class Project extends JiraConnection {
+class Project extends JiraConnection
+{
     /**
      * @var Authentication Reference to instance of self
      */
@@ -134,7 +136,7 @@ class Project extends JiraConnection {
                     break;
             }
         }
-        return array();        
+        return array();
     }
     /**
      * Retrieves a project in Jira
@@ -151,7 +153,7 @@ class Project extends JiraConnection {
         } elseif ($this->getShouldExceptionOnError()) {
             throw new \Exception('Project not found');
         }
-        return array();        
+        return array();
     }
     /**
      * Returns an array of all projects from Jira

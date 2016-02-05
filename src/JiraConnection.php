@@ -3,10 +3,12 @@
 namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\Authentication;
+
 /**
  * A class used for communicating with the Atlassian Jira RESTful API
  */
-abstract class JiraConnection {
+abstract class JiraConnection
+{
     /**
      * @var Authentication Reference to instance of Authentication singleton
      */
@@ -52,7 +54,7 @@ abstract class JiraConnection {
      * Returns the value of {@link shouldExceptionOnError}
      * @return bool The value of {@link shouldExceptionOnError}
      */
-    public function getShouldExceptionOnError ()
+    public function getShouldExceptionOnError()
     {
         return $this->shouldExceptionOnError;
     }
