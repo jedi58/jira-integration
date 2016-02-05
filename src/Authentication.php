@@ -1,11 +1,13 @@
 <?php
 
 namespace Inachis\Component\JiraIntegration;
+
 /**
  * Class to be used as a singleton to provide authentication for
  * requests to the Jira API
  */
-class Authentication {
+class Authentication
+{
     /**
      * @var Authentication Reference to instance of self
      */
@@ -16,7 +18,7 @@ class Authentication {
     protected $apiBaseUrl = '';
     /**
      * @var string The base64 encoded username:password pair to use for
-     *		authentication
+     *      authentication
      */
     protected $apiAuth = '';
     /**
@@ -27,12 +29,12 @@ class Authentication {
      * @return Authentication The singleton instance
      */
     public static function getInstance(
-            $url = '',
-            $username = '',
-            $password = ''
+        $url = '',
+        $username = '',
+        $password = ''
     ) {
         if (null === static::$instance) {
-                static::$instance = new static($url, $username, $password);
+            static::$instance = new static($url, $username, $password);
         }
         return static::$instance;
     }

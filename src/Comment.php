@@ -5,10 +5,11 @@ namespace Inachis\Component\JiraIntegration;
 use Inachis\Component\JiraIntegration\JiraConnection;
 
 /**
- * Object for interacting with comment part of the 
+ * Object for interacting with comment part of the
  * Issue resources from the Jira API
  */
-class Comment extends JiraConnection {
+class Comment extends JiraConnection
+{
     /**
      * @var Authentication Reference to instance of self
      */
@@ -38,7 +39,7 @@ class Comment extends JiraConnection {
             $data['visibility'] = $visibility;
         }
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . '/comment', 
+            'issue/' . urlencode($issueKey) . '/comment',
             $data,
             'POST'
         );
@@ -66,8 +67,8 @@ class Comment extends JiraConnection {
             $data['expand'] = 'true';
         }
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . 
-                '/comment/' . urlencode($commentId),
+            'issue/' . urlencode($issueKey) .
+            '/comment/' . urlencode($commentId),
             $data,
             'PUT'
         );
@@ -81,8 +82,8 @@ class Comment extends JiraConnection {
     public function delete($issueKey, $commentId)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . 
-                '/comment/' . urlencode($commentId),
+            'issue/' . urlencode($issueKey) .
+            '/comment/' . urlencode($commentId),
             array(),
             'DELETE'
         );
@@ -96,8 +97,8 @@ class Comment extends JiraConnection {
     public function get($issueKey, $commentId)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . 
-                '/comment/' . urlencode($commentId)
+            'issue/' . urlencode($issueKey) .
+            '/comment/' . urlencode($commentId)
         );
     }
     /**
@@ -109,8 +110,8 @@ class Comment extends JiraConnection {
     public function getAsHtml($issueKey, $commentId)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . 
-                '/comment/' . urlencode($commentId),
+            'issue/' . urlencode($issueKey) .
+            '/comment/' . urlencode($commentId),
             array('expand' => 'true')
         );
     }
@@ -119,10 +120,10 @@ class Comment extends JiraConnection {
      * @param string $issueKey The issue to get comments for
      * @return stdClass The comments for the given issue
      */
-    public function getAll($issueKey, $expand = false)
+    public function getAll($issueKey)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . '/comment',
+            'issue/' . urlencode($issueKey) . '/comment'
         );
     }
     /**

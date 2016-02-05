@@ -7,7 +7,8 @@ use Inachis\Component\JiraIntegration\JiraConnection;
 /**
  * Project object for interacting with the project namespace of the Jira API
  */
-class Project extends JiraConnection {
+class Project extends JiraConnection
+{
     /**
      * @var Authentication Reference to instance of self
      */
@@ -73,7 +74,7 @@ class Project extends JiraConnection {
             'project/' . urlencode($projectKey),
             array(),
             'DELETE'
-        );      
+        );
     }
     /**
      * Retrieves a project in Jira

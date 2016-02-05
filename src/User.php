@@ -8,7 +8,8 @@ use Inachis\Component\JiraIntegration\JiraConnection;
  * Object for interacting with User resources from the
  * Jira API
  */
-class User extends JiraConnection {
+class User extends JiraConnection
+{
     /**
      * @var Authentication Reference to instance of self
      */

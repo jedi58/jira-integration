@@ -8,7 +8,8 @@ use Inachis\Component\JiraIntegration\JiraConnection;
  * Object for handling permission resource requests from
  * the Jira API
  */
-class Permission extends JiraConnection {
+class Permission extends JiraConnection
+{
     /**
      * Retrieves current user's permissions for a given project or issue
      * @param string $projectOrIssue Indicates if request is for project/issue

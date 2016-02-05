@@ -8,72 +8,58 @@ use Inachis\Component\JiraIntegration\JiraConnection;
  * Object for interacting with IssueType resources from the
  * Jira API
  */
-class IssueType extends JiraConnection {
-	/**
-	 * @var Authentication Reference to instance of self
-	 */
-	private static $instance;
-	/**
-	 * Returns a singleton instance of this class
-	 * @return IssueType The singleton instance
-	 */
-	public static function getInstance()
-	{
-		if (null === static::$instance) {
-			static::$instance = new static();
-		}
-		return static::$instance;
-	}
+class IssueType extends JiraConnection
+{
     /**
-	 * Creates a new isue type
-	 * @param string $name The name of the new issue type
-	 * @param string $description Descriptive text for the new issue type
-	 * @param string $type The type of issue type being created
-	 * @return stdClass The result of creating the issue type
-	 */
+     * Creates a new isue type
+     * @param string $name The name of the new issue type
+     * @param string $description Descriptive text for the new issue type
+     * @param string $type The type of issue type being created
+     * @return stdClass The result of creating the issue type
+     */
     public function create($name, $description = '', $type = '')
     {
-    	return $this->sendRequest(
-    		'issuetype',
-    		array(
-    			'name' => $name,
-    			'description' => $description,
-    			'type' => $type
-			),
-    		'POST'
-		);
+        return $this->sendRequest(
+            'issuetype',
+            array(
+                'name' => $name,
+                'description' => $description,
+                'type' => $type
+            ),
+            'POST'
+        );
     }
     /**
-	 * Updates an existing issue type
-	 * @param string $name The new name of the  issue type
-	 * @param string $description The new descriptive text for the issue type
-	 * @param string $type The new type for issue type
-	 * @return stdClass The result of updating the issue type
-	 */
+     * Updates an existing issue type
+     * @param string $name The new name of the  issue type
+     * @param string $description The new descriptive text for the issue type
+     * @param string $type The new type for issue type
+     * @return stdClass The result of updating the issue type
+     */
     public function update($type_key, $name, $description = '', $type = '')
     {
-    	return $this->sendRequest(
-    		'issuetype/' . urlencode($type_key),
-    		array(
-    			'name' => $name,
-    			'description' => $description,
-    			'type' => $type
-			),
-    		'PUT'
-		);
+        return $this->sendRequest(
+            'issuetype/' . urlencode($type_key),
+            array(
+                'name' => $name,
+                'description' => $description,
+                'type' => $type
+            ),
+            'PUT'
+        );
     }
     /**
-	 * Deletes a specific issue type
-	 * @param string $type_key The key identifying the issue type
-	 * @return stdClass The result of deleting the issue type
-	 */
+     * Deletes a specific issue type
+     * @param string $type_key The key identifying the issue type
+     * @return stdClass The result of deleting the issue type
+     */
     public function delete($type_key)
     {
-    	return $this->sendRequest(
-    		'issuetype/' . urlencode($type_key),
-    		array(),
-    		'DELETE'
-		);
+        return $this->sendRequest(
+            'issuetype/' . urlencode($type_key),
+            array(),
+            'DELETE'
+        );
     }
     /**
      * Returns a specific issue type
@@ -82,7 +68,7 @@ class IssueType extends JiraConnection {
      */
     public function get($type_key)
     {
-    	return $this->sendRequest('issuetype/' . urlencode($type_key));
+        return $this->sendRequest('issuetype/' . urlencode($type_key));
     }
     /**
      * Returns an object containing all issue types available

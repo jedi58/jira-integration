@@ -8,7 +8,8 @@ use Inachis\Component\JiraIntegration\JiraConnection;
  * Object for interacting with the worklog part of the Issue
  * resource from the Jira API
  */
-class Worklog extends JiraConnection {
+class Worklog extends JiraConnection
+{
     /**
      * @var Authentication Reference to instance of self
      */
@@ -25,7 +26,7 @@ class Worklog extends JiraConnection {
         return static::$instance;
     }
     /**
-     * 
+     *
      * @param string $issueKey The issue to add the worklog update to
      * @param string|int $timeSpent The amount of time spent on the current issue
      * @param string[] $options Any additional options that should be applied
@@ -61,8 +62,8 @@ class Worklog extends JiraConnection {
     ) {
         $timeKey = is_int($timeSpent) ? 'timeSpentSeconds' : 'timeSpent';
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . 
-                '/worklog/' . urlencode($worklogKey),
+            'issue/' . urlencode($issueKey) .
+            '/worklog/' . urlencode($worklogKey),
             array_merge(
                 array(
                     $timeKey => $timeSpent
@@ -81,8 +82,8 @@ class Worklog extends JiraConnection {
     public function delete($issueKey, $worklogKey)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . 
-                '/worklog/' . urlencode($worklogKey),
+            'issue/' . urlencode($issueKey) .
+            '/worklog/' . urlencode($worklogKey),
             array(),
             'DELETE'
         );
@@ -96,8 +97,8 @@ class Worklog extends JiraConnection {
     public function get($issueKey, $worklogKey)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issueKey) . 
-                '/worklog/' . urlencode($worklogKey)
+            'issue/' . urlencode($issueKey) .
+            '/worklog/' . urlencode($worklogKey)
         );
     }
     /**
@@ -107,7 +108,7 @@ class Worklog extends JiraConnection {
      */
     public function getAll($issueKey)
     {
-        return $this->sendRequest('issue/' . urlencode($issueKey) . 
+        return $this->sendRequest('issue/' . urlencode($issueKey) .
                 '/worklog/');
     }
 }
