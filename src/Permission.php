@@ -3,8 +3,10 @@
 namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\JiraConnection;
+
 /**
- *
+ * Object for handling permission resource requests from
+ * the Jira API
  */
 class Permission extends JiraConnection {
 	/**
@@ -13,7 +15,7 @@ class Permission extends JiraConnection {
 	private static $instance;
 	/**
 	 * Returns a singleton instance of this class
-	 * @return Issue The singleton instance
+	 * @return Permission The singleton instance
 	 */
 	public static function getInstance()
 	{
@@ -23,24 +25,25 @@ class Permission extends JiraConnection {
 		return static::$instance;
 	}
 	/**
-	 *
+	 * Retrieves current user's permissions for a given project or issue
+	 * @param string $projectOrIssue Indicates if request is for project/issue
+	 * @param string|int $key The numerical Id or key for the the project/issue
+	 * @return stdClass The requested permissions
 	 */
-	public function getPermissions()
+	public function get($projectOrIssue = '', $key = '')
 	{
-		return $this->sendRequest('mypermissions');
+		$data = array();
+		if (!empty($projectOrIssue) && !empty($key)) {
+			$data[$projectOrIssue . is_int($key) ? 'Id' : 'Key'] = $key;
+		}
+		return $this->sendRequest('mypermissions', $data);
 	}
 	/**
-	 *
+	 * Returns an object containing all permissions
+	 * @return stdClass The requested permissions
 	 */
-	public function getAllPermissions()
+	public function getAll()
 	{
-		$result = $this->sendRequest('permissions');
-		$response = $this->getLastResponseCode();
-		if ($response === 200) {
-			return $result;
-		} elseif ($this->getShouldExceptionOnError()) {
-			throw new \Exception('Failed to return permissions. Permission denied');
-		}
-		return array('permissions' => null);
+		return $this->sendRequest('permissions');
 	}
 }

@@ -3,8 +3,10 @@
 namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\JiraConnection;
+
 /**
- *
+ * Object for interacting with User resources from the
+ * Jira API
  */
 class User extends JiraConnection {
     /**
@@ -13,7 +15,7 @@ class User extends JiraConnection {
     private static $instance;
     /**
      * Returns a singleton instance of this class
-     * @return Issue The singleton instance
+     * @return User The singleton instance
      */
     public static function getInstance()
     {
@@ -25,9 +27,9 @@ class User extends JiraConnection {
     /**
      * Returns an array of the assignable users for a project
      * @param string[] $options The settings to apply to the search
-     * @return
+     * @return stdCladd The object containing all assignable users
      */
-    public function getAssignableUsers($options = array())
+    public function getAll($options = array())
     {
         return $this->sendRequest(
             'user/assignable/search?' . http_build_query($options)

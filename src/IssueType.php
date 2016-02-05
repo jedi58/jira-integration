@@ -4,6 +4,10 @@ namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\JiraConnection;
 
+/**
+ * Object for interacting with IssueType resources from the
+ * Jira API
+ */
 class IssueType extends JiraConnection {
 	/**
 	 * @var Authentication Reference to instance of self
@@ -11,7 +15,7 @@ class IssueType extends JiraConnection {
 	private static $instance;
 	/**
 	 * Returns a singleton instance of this class
-	 * @return Issue The singleton instance
+	 * @return IssueType The singleton instance
 	 */
 	public static function getInstance()
 	{
@@ -21,11 +25,15 @@ class IssueType extends JiraConnection {
 		return static::$instance;
 	}
     /**
-	 *
+	 * Creates a new isue type
+	 * @param string $name The name of the new issue type
+	 * @param string $description Descriptive text for the new issue type
+	 * @param string $type The type of issue type being created
+	 * @return stdClass The result of creating the issue type
 	 */
-    public function createIssueType($name, $description = '', $type = '')
+    public function create($name, $description = '', $type = '')
     {
-    	$result = $this->sendRequest(
+    	return $this->sendRequest(
     		'issuetype',
     		array(
     			'name' => $name,
@@ -34,33 +42,17 @@ class IssueType extends JiraConnection {
 			),
     		'POST'
 		);
-		$response = $this->getLastResponseCode();
-		if ($response === 201) {
-			return $result;
-		} elseif ($this->getShouldExceptionOnError()) {
-			switch ($response) {
-				case 400:
-					throw new \Exception('Request invalid');
-					break;
-				case 401:
-					throw new \Exception('User not authenticated');
-					break;
-				case 403:
-					throw new \Exception('User does not have permissions');
-					break;
-				case 409:
-					throw new \Exception('Issue already exists with this name');
-					break;
-			}
-		}
-		return array();
     }
     /**
-	 *
+	 * Updates an existing issue type
+	 * @param string $name The new name of the  issue type
+	 * @param string $description The new descriptive text for the issue type
+	 * @param string $type The new type for issue type
+	 * @return stdClass The result of updating the issue type
 	 */
-    public function updateIssueType($type_key, $name, $description = '', $type = '')
+    public function update($type_key, $name, $description = '', $type = '')
     {
-    	$result = $this->sendRequest(
+    	return $this->sendRequest(
     		'issuetype/' . urlencode($type_key),
     		array(
     			'name' => $name,
@@ -69,80 +61,35 @@ class IssueType extends JiraConnection {
 			),
     		'PUT'
 		);
-		$response = $this->getLastResponseCode();
-		if ($response === 200) {
-			return $result;
-		} elseif ($this->getShouldExceptionOnError()) {
-			switch ($response) {
-				case 400:
-					throw new \Exception('Request invalid');
-					break;
-				case 401:
-					throw new \Exception('User not authenticated');
-					break;
-				case 403:
-					throw new \Exception('User does not have permissions');
-					break;
-				case 404:
-					throw new \Exception('Issue type not found');
-					break;
-				case 409:
-					throw new \Exception('Issue already exists with this name');
-					break;
-			}
-		}
-		return array();
     }
     /**
-	 *
+	 * Deletes a specific issue type
+	 * @param string $type_key The key identifying the issue type
+	 * @return stdClass The result of deleting the issue type
 	 */
-    public function deleteIssueType($type_key)
+    public function delete($type_key)
     {
-    	$result = $this->sendRequest(
+    	return $this->sendRequest(
     		'issuetype/' . urlencode($type_key),
     		array(),
     		'DELETE'
 		);
-		$response = $this->getLastResponseCode();
-		if ($response === 204) {
-			return $result;
-		} elseif ($this->getShouldExceptionOnError()) {
-			switch ($response) {
-				case 400:
-					throw new \Exception('Request invalid');
-					break;
-				case 401:
-					throw new \Exception('User not authenticated');
-					break;
-				case 403:
-					throw new \Exception('User does not have permissions');
-					break;
-				case 404:
-					throw new \Exception('Issue type not found');
-					break;
-			}
-		}
-		return array();
     }
     /**
-     *
+     * Returns a specific issue type
+     * @param string $type_key The identifier for the issue type
+     * @return stdClass The object containing the issue type
      */
-    public function getAllIssueTypes()
+    public function get($type_key)
+    {
+    	return $this->sendRequest('issuetype/' . urlencode($type_key));
+    }
+    /**
+     * Returns an object containing all issue types available
+     * @return stdClass The object containing all issuetypes
+     */
+    public function getAll()
     {
         return $this->sendRequest('issuetype');
-    }
-    /**
-     *
-     */
-    public function getIssueType($type_key)
-    {
-    	$result = $this->sendRequest('issuetype/' . urlencode($type_key));
-    	$response = $this->getLastResponseCode();
-    	if ($response === 200) {
-    		return $result;
-    	} elseif ($this->getShouldExceptionOnError()) {
-    		throw new \Exception('Issue type does not exist');
-    	}
-    	return array();
     }
 }

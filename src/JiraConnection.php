@@ -22,7 +22,7 @@ abstract class JiraConnection {
     /**
      * @var bool Flag indicating functions should throw exception on API failure
      */
-    protected $shouldExceptionOnError = false;
+    protected $useExceptions = false;
     /**
      * Default constructor for JiraIntegration
      */
@@ -49,12 +49,12 @@ abstract class JiraConnection {
         return $this->last_response_code;
     }
     /**
-     * Returns the value of {@link shouldExceptionOnError}
-     * @return bool The value of {@link shouldExceptionOnError}
+     * Returns the value of {@link useExceptions}
+     * @return bool The value of {@link useExceptions}
      */
-    public function getShouldExceptionOnError ()
+    public function getUseExceptions()
     {
-        return $this->shouldExceptionOnError;
+        return $this->useExceptions;
     }
     /**
      * Sets the value of {@link result}
@@ -75,12 +75,12 @@ abstract class JiraConnection {
         $this->last_response_code = (int) $value;
     }
     /**
-     * Sets the value of {@link shouldExceptionOnError}
-     * @param bool $value The value to set for {@link shouldExceptionOnError}
+     * Sets the value of {@link useExceptions}
+     * @param bool $value The value to set for {@link useExceptions}
      */
-    public function setsSouldExceptionOnError($value)
+    public function setUseExceptions($value)
     {
-        $this->shouldExceptionOnError = (bool) $value;
+        $this->useExceptions = (bool) $value;
     }
     /**
      * Sends the request to the Jira API. The response code is also
@@ -118,6 +118,46 @@ abstract class JiraConnection {
         $result = json_decode(curl_exec($ch));
         $this->setLastResponseCode(curl_getinfo($ch, CURLINFO_HTTP_CODE));
         curl_close($ch);
+        $response_code = $this->getLastResponseCode();
+        if ($response_code < 300 && $this->getUseExceptions()) {
+            throw new \Exception($this->getHTTPStatusCodeAsText($response_code));
+        }
         return $result;
+    }
+    /**
+     * Returns descriptive text for the provided HTTP response code
+     * @param string $code The HTTP status code returns by the API request
+     * @return string The descriptive error for the status code
+     */
+    protected function getHTTPStatusCodeAsText($code)
+    {
+        switch($code) {
+            case 400:
+                $message = 'Invalid request';
+
+            case 401:
+                $message = 'Request not authenticated';
+                break;
+
+            case 403:
+                $message = 'Permission denied';
+                break;
+
+            case 404:
+                $message = 'Resource not found';
+                break;
+
+            case 409:
+                $message = 'Format is not supported or name already in use';
+                break;
+
+            case 412:
+                $message = 'If-Match header is not null and does not match server';
+                break;
+
+            default:
+                $message = 'Undefined error';
+        }
+        return $message;
     }
 }
