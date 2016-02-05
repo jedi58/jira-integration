@@ -9,51 +9,51 @@ use Inachis\Component\JiraIntegration\JiraConnection;
  * Issue resources from the Jira API
  */
 class Comment extends JiraConnection {
-	/**
-	 * @var Authentication Reference to instance of self
-	 */
-	private static $instance;
-	/**
-	 * Returns a singleton instance of this class
-	 * @return Comment The singleton instance
-	 */
-	public static function getInstance()
-	{
-		if (null === static::$instance) {
-			static::$instance = new static();
-		}
-		return static::$instance;
-	}
+    /**
+     * @var Authentication Reference to instance of self
+     */
+    private static $instance;
+    /**
+     * Returns a singleton instance of this class
+     * @return Comment The singleton instance
+     */
+    public static function getInstance()
+    {
+        if (null === static::$instance) {
+            static::$instance = new static();
+        }
+        return static::$instance;
+    }
     /**
      * Adds a comment to the specified ticket
-     * @param string $issue_key The ticket to be updated
+     * @param string $issueKey The ticket to be updated
      * @param string $text The markdown supported comment to add
      * @param string[] Optional array of visibility details for comment
      * @return stdClass The result of adding the comment
      */
-    public function create($issue_key, $text, $visibility = null)
+    public function create($issueKey, $text, $visibility = null)
     {
-        $data - array('body' => $text);
+        $data = array('body' => $text);
         if (!empty($visibility)) {
             $data['visibility'] = $visibility;
         }
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key) . '/comment', 
+            'issue/' . urlencode($issueKey) . '/comment', 
             $data,
             'POST'
         );
     }
     /**
      * Updated the specified comment
-     * @param string $issue_key The ticket to be updated
-     * @param string $comment_id The ID of the comment to update
+     * @param string $issueKey The ticket to be updated
+     * @param string $commentId The ID of the comment to update
      * @param string $text The markdown supported comment to add
      * @param string[] Optional array of visibility details for comment
      * @return stdClass The result of updating the comment
      */
     public function update(
-        $issue_key,
-        $comment_id,
+        $issueKey,
+        $commentId,
         $text,
         $visibility = null,
         $expand = false
@@ -66,53 +66,53 @@ class Comment extends JiraConnection {
             $data['expand'] = 'true';
         }
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
-                '/comment/' . urlencode($comment_id),
+            'issue/' . urlencode($issueKey) . 
+                '/comment/' . urlencode($commentId),
             $data,
             'PUT'
         );
     }
     /**
      * Deletes the specified comment from the issue
-     * @param string $issue_key The ticket to be updated
-     * @param string $comment_id The ID of the comment to update
+     * @param string $issueKey The ticket to be updated
+     * @param string $commentId The ID of the comment to update
      * @return stdClass The result of deleting the comment from the issue
      */
-    public function delete($issue_key, $comment_id)
+    public function delete($issue_key, $commentId)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
-                '/comment/' . urlencode($comment_id),
+            'issue/' . urlencode($issueKey) . 
+                '/comment/' . urlencode($commentId),
             array(),
             'DELETE'
         );
     }
     /**
      * Returns a specific comment for an issue
-     * @param string $issue_key The issue to get comments for
-     * @param string $comment_id The ID of the comment to retrieve
+     * @param string $issueKey The issue to get comments for
+     * @param string $commentId The ID of the comment to retrieve
      * @param bool $expand Flag indicating if comment should be HTML
      * @return stdClass The requested comment
      */
-    public function get($issue_key, $comment_id, $expand = false)
+    public function get($issueKey, $commentId, $expand = false)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key) . 
-                '/comment/' . urlencode($comment_id),
+            'issue/' . urlencode($issueKey) . 
+                '/comment/' . urlencode($commentId),
             $expand ? array('expand' => 'true') : array(),
             'GET'
         );
     }
     /**
      * Returns an array of all commments for the specified issue
-     * @param string $issue_key The issue to get comments for
+     * @param string $issueKey The issue to get comments for
      * @param bool $expand Flag indicating if comment should be HTML
      * @return stdClass The comments for the given issue
      */
-    public function getAll($issue_key, $expand = false)
+    public function getAll($issueKey, $expand = false)
     {
         return $this->sendRequest(
-            'issue/' . urlencode($issue_key) . '/comment',
+            'issue/' . urlencode($issueKey) . '/comment',
             $expand ? array('expand' => 'true') : array(),
             'GET'
         );
