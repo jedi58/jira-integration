@@ -63,16 +63,8 @@ class Issue extends JiraConnection
             ),
             $custom
         );
-        if (is_numeric($project)) {
-            $data['fields']['project']['id'] = $project;
-        } else {
-            $data['fields']['project']['key'] = $project;
-        }
-        if (is_numeric($issuetype)) {
-            $data['fields']['issuetype']['id'] = $issuetype;
-        } else {
-            $data['fields']['issuetype']['name'] = $issuetype;
-        }
+        $data['fields']['project'][is_numeric($project) ? 'id' : 'key'] = $project;
+        $data['fields']['issuetype'][is_numeric($issuetype) ? 'id' : 'name'] = $issuetype;
         if (isset($data['timetracking']) && !empty($timetracking)) {
             $data['fields']['timetracking'] = $timetracking;
         }
@@ -98,12 +90,12 @@ class Issue extends JiraConnection
      * @param bool $remove_subtasks Flag indicating if sub-tasks can be removed
      * @return stdClass Returns TRUE if deletion was successful
      */
-    public function delete($issueKey, $remove_subtasks = false)
+    public function delete($issueKey, $removeSubtasks = false)
     {
         return $this->sendRequest(
             'issue/' . urlencode($issueKey),
             array(
-                'deleteSubtasks' => (string) $remove_subtasks
+                'deleteSubtasks' => (string) $removeSubtasks
             ),
             'DELETE'
         );
