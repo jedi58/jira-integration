@@ -25,7 +25,7 @@ class Comment extends JiraConnection
         }
         return static::$instance;
     }
-    /**
+   /**
      * Adds a comment to the specified ticket
      * @param string $issueKey The ticket to be updated
      * @param string $text The markdown supported comment to add

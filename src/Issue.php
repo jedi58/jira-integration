@@ -8,22 +8,23 @@ use Inachis\Component\JiraIntegration\JiraConnection;
  * Object for interacting with Issue resources from the
  * Jira API
  */
-class Issue extends JiraConnection {
-	/**
-	 * @var Authentication Reference to instance of self
-	 */
-	private static $instance;
-	/**
-	 * Returns a singleton instance of this class
-	 * @return Issue The singleton instance
-	 */
-	public static function getInstance()
-	{
-		if (null === static::$instance) {
-			static::$instance = new static();
-		}
-		return static::$instance;
-	}
+class Issue extends JiraConnection
+{
+    /**
+     * @var Authentication Reference to instance of self
+     */
+    private static $instance;
+    /**
+     * Returns a singleton instance of this class
+     * @return Issue The singleton instance
+     */
+    public static function getInstance()
+    {
+        if (null === static::$instance) {
+            static::$instance = new static();
+        }
+        return static::$instance;
+    }
     /**
      * Creates a new ticket
      * @param string[] Settings to apply to the ticket
@@ -48,7 +49,7 @@ class Issue extends JiraConnection {
         $project,
         $title,
         $description,
-        $issuetype = 'Bug', 
+        $issuetype = 'Bug',
         $timetracking = array(),
         $custom = array()
     ) {
@@ -102,7 +103,7 @@ class Issue extends JiraConnection {
         return $this->sendRequest(
             'issue/' . urlencode($issue_key),
             array(
-                'deleteSubtasks' => (string) $remove_subtasks 
+                'deleteSubtasks' => (string) $remove_subtasks
             ),
             'DELETE'
         );

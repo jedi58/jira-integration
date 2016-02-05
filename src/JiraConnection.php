@@ -3,10 +3,12 @@
 namespace Inachis\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\Authentication;
+
 /**
  * A class used for communicating with the Atlassian Jira RESTful API
  */
-abstract class JiraConnection {
+abstract class JiraConnection
+{
     /**
      * @var Authentication Reference to instance of Authentication singleton
      */
@@ -93,9 +95,11 @@ abstract class JiraConnection {
      */
     protected function sendRequest($url, $data = array(), $method = 'GET', $multipart = false)
     {
-        $ch = curl_init();
+        $jiraConn = curl_init();
         curl_setopt(
-                $ch, CURLOPT_URL, $this->authentication->getApiBaseUrl() . '/rest/api/latest/' . $url
+            $jiraConn,
+            CURLOPT_URL,
+            $this->authentication->getApiBaseUrl() . '/rest/api/latest/' . $url
         );
         $headers = array(
             'Content-type: application/json',
@@ -105,19 +109,19 @@ abstract class JiraConnection {
             $headers[0] = 'Content-type: multipart/form-data';
             $headers[] = 'X-Atlassian-Token: no-check';
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($jiraConn, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($jiraConn, CURLOPT_HEADER, false);
+        curl_setopt($jiraConn, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($jiraConn, CURLOPT_RETURNTRANSFER, true);
         if ($method == 'POST') {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $multipart ? $data : json_encode($data));
+            curl_setopt($jiraConn, CURLOPT_POST, true);
+            curl_setopt($jiraConn, CURLOPT_POSTFIELDS, $multipart ? $data : json_encode($data));
         } else {
-            curl_setopt($ch, CURLOPT_HTTPGET, $data);
+            curl_setopt($jiraConn, CURLOPT_HTTPGET, $data);
         }
-        $result = json_decode(curl_exec($ch));
-        $this->setLastResponseCode(curl_getinfo($ch, CURLINFO_HTTP_CODE));
-        curl_close($ch);
+        $result = json_decode(curl_exec($jiraConn));
+        $this->setLastResponseCode(curl_getinfo($jiraConn, CURLINFO_HTTP_CODE));
+        curl_close($jiraConn);
         $response_code = $this->getLastResponseCode();
         if ($response_code < 300 && $this->getUseExceptions()) {
             throw new \Exception($this->getHTTPStatusCodeAsText($response_code));
@@ -131,9 +135,10 @@ abstract class JiraConnection {
      */
     protected function getHTTPStatusCodeAsText($code)
     {
-        switch($code) {
+        switch ($code) {
             case 400:
                 $message = 'Invalid request';
+                break;
 
             case 401:
                 $message = 'Request not authenticated';
