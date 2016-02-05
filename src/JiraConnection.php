@@ -122,9 +122,9 @@ abstract class JiraConnection
         $result = json_decode(curl_exec($jiraConn));
         $this->setLastResponseCode(curl_getinfo($jiraConn, CURLINFO_HTTP_CODE));
         curl_close($jiraConn);
-        $response_code = $this->getLastResponseCode();
-        if ($response_code < 300 && $this->getUseExceptions()) {
-            throw new \Exception($this->getHTTPStatusCodeAsText($response_code));
+        $responseCode = $this->getLastResponseCode();
+        if ($responseCode < 300 && $this->getUseExceptions()) {
+            throw new \Exception($this->getHTTPStatusCodeAsText($responseCode));
         }
         return $result;
     }
