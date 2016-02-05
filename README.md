@@ -39,7 +39,7 @@ These details will then be automatically used when utilising any of the below ob
 ### Creating a ticket (Simple)
 Creates a new ticket and assigns it to the specified project (in the below example this is `DEMO`).
 ```php
-$case_id = Issue::getInstance()->simpleCreateTicket(
+$case = Issue::getInstance()->simpleCreate(
     'DEMO',
     'A test ticket',
     'There is an issue here - please fix it',
@@ -58,7 +58,7 @@ This can also take optional parameters for setting the type of ticket, time trac
 ### Creating a ticket
 This is a more versatile version of the function for creating a ticket in Jira. It will only take an array as it's parameter and expects you to pass in everything required.
 ```php
-$case_id = Issue::getInstance()->createTicket(array('fields' => array(
+$case_id = Issue::getInstance()->create(array('fields' => array(
     'project' => array(
         'key' => 'DEMO'
     ),
@@ -70,14 +70,14 @@ $case_id = Issue::getInstance()->createTicket(array('fields' => array(
 )));
 ```
 
-As with the `simpleCreateTicket` function this will return the ID of the ticket that has been created.
+As with the `simpleCreate` function this will return an stClass containing the ID of the ticket that has been created.
 
 
 <a name="update"></a>
 ### Updating a ticket
 This is a more versatile way of updating a ticket's properties - all changes must be passed in to the array.
 ```php
-$case_id = Issue::getInstance()->updateTicket('DEMO-1234', array('fields' => array(
+$case = Issue::getInstance()->update('DEMO-1234', array('fields' => array(
     'summary' => 'This is the new description of the ticket'
 )));
 ```
@@ -86,13 +86,16 @@ $case_id = Issue::getInstance()->updateTicket('DEMO-1234', array('fields' => arr
 <a name="deleteTicket"></a>
 ### Deleting a ticket
 If a ticket has sub-tasks then it will be necessary to pass `true` into this function also in order to confirm that they should be removed.
+```php
+$case = Issue::getInstance()->delete('DEMO-1234');
+```
 
 
 <a name="getTicket"></a>
 ### Retrieving a specific ticket
 This will return an `StdClass` object containing the ticket and all it's properties.
 ```php
-$ticket = Issue::getInstance()->getTicket('DEMO-123');
+$ticket = Issue::getInstance()->get('DEMO-123');
 ```
 
 
@@ -100,7 +103,7 @@ $ticket = Issue::getInstance()->getTicket('DEMO-123');
 ###Adding comments to tickets
 This will add a comment to the ticket.
 ```php
-Comment::getInstance()->('DEMO-123', 'This is a comment!', array(
+Comment::getInstance()->create('DEMO-123', 'This is a comment!', array(
     'type' => 'role',
     'value' => 'Administrators'
 ));
@@ -112,7 +115,7 @@ The result returned is an array with the only element being the timestamp the co
 <a name="getAllProjects"></a>
 ###Retrieving a list of all projects
 ```php
-$projects = Project::getInstance()->getProjects();
+$projects = Project::getInstance()->getAll();
 ```
 
 
@@ -140,5 +143,5 @@ $custom = Issue::getInstance()->getCustomFieldOption(1);
 <a name="getAssignableUsers"></a>
 ###Retrieve a list of assignable users
 ```php
-$users = User::getInstance()->getAssignableUsers();
+$users = User::getInstance()->getAll();
 ```
