@@ -89,7 +89,7 @@ class Issue extends JiraConnection
     /**
      * Deletes the specified ticket
      * @param string $issueKey The ticket to be removed
-     * @param bool $remove_subtasks Flag indicating if sub-tasks can be removed
+     * @param bool $removeSubtasks Flag indicating if sub-tasks can be removed
      * @return stdClass Returns TRUE if deletion was successful
      */
     public function delete($issueKey, $removeSubtasks = false)

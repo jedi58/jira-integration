@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+1.1.0
+-----
+
+ * Improved code quality and changed `create*`, `update*`, `delete*`, `getAll*` function names to be shorter
+ * Split `Worklog` object from `Issue` object
+
 1.0.1
 -----
 
