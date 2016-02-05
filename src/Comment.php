@@ -56,15 +56,11 @@ class Comment extends JiraConnection
         $issueKey,
         $commentId,
         $text,
-        $visibility = null,
-        $expand = false
+        $visibility = null
     ) {
         $data - array('body' => $text);
         if (!empty($visibility)) {
             $data['visibility'] = $visibility;
-        }
-        if ($expand) {
-            $data['expand'] = 'true';
         }
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) .

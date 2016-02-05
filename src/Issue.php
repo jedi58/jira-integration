@@ -56,15 +56,17 @@ class Issue extends JiraConnection
         $data = array();
         $data['fields'] = array_merge(
             array(
-                'project' => array(),
+                'project' => array(
+                    is_numeric($project) ? 'id' : 'key' => $project
+                ),
                 'summary' => $title,
                 'description' => $description,
-                'issuetype' => array()
+                'issuetype' => array(
+                    is_numeric($issuetype) ? 'id' : 'name' => $issuetype
+                )
             ),
             $custom
         );
-        $data['fields']['project'][is_numeric($project) ? 'id' : 'key'] = $project;
-        $data['fields']['issuetype'][is_numeric($issuetype) ? 'id' : 'name'] = $issuetype;
         if (isset($data['timetracking']) && !empty($timetracking)) {
             $data['fields']['timetracking'] = $timetracking;
         }
