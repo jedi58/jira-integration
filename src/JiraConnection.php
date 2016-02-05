@@ -20,7 +20,7 @@ abstract class JiraConnection
     /**
      * @var int The HTTP status code from the last API call
      */
-    protected $last_response_code = 0;
+    protected $lastResponseCode = 0;
     /**
      * @var bool Flag indicating functions should throw exception on API failure
      */
@@ -38,9 +38,9 @@ abstract class JiraConnection
      *          encoded when returned
      * @return string The value of {@link api_base_url}
      */
-    public function getResult($json_encode = false)
+    public function getResult($jsonEncode = false)
     {
-        return $json_encode ? json_encode($this->result) : $this->result;
+        return $jsonEncode ? json_encode($this->result) : $this->result;
     }
     /**
      * Returns the value of {@link last_response_code}
@@ -48,7 +48,7 @@ abstract class JiraConnection
      */
     public function getLastResponseCode()
     {
-        return $this->last_response_code;
+        return $this->lastResponseCode;
     }
     /**
      * Returns the value of {@link useExceptions}
@@ -64,9 +64,9 @@ abstract class JiraConnection
      * @param bool $json_decode Flag indicating if value should be JSON decoded
      *      when assigned
      */
-    public function setResult($value, $json_decode = false)
+    public function setResult($value, $jsonDecode = false)
     {
-        $this->result = $json_decode ? json_decode($value) : $value;
+        $this->result = $jsonDecode ? json_decode($value) : $value;
     }
     /**
      * Sets the value of {@link last_response_code}
@@ -74,7 +74,7 @@ abstract class JiraConnection
      */
     public function setLastResponseCode($value)
     {
-        $this->last_response_code = (int) $value;
+        $this->lastResponseCode = (int) $value;
     }
     /**
      * Sets the value of {@link useExceptions}
