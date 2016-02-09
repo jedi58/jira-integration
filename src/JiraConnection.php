@@ -173,6 +173,6 @@ abstract class JiraConnection
      */
     protected function specifyIdOrKey($value, $field = 'key')
     {
-        return array(is_numeric($value) ? 'id' : 'key' => $value);
+        return array(is_numeric($value) ? 'id' : $field => $value);
     }
 }
