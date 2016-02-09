@@ -56,14 +56,10 @@ class Issue extends JiraConnection
         $data = array();
         $data['fields'] = array_merge(
             array(
-                'project' => array(
-                    is_numeric($project) ? 'id' : 'key' => $project
-                ),
+                'project' => $this->specifyIdOrKey($project),
                 'summary' => $title,
                 'description' => $description,
-                'issuetype' => array(
-                    is_numeric($issuetype) ? 'id' : 'name' => $issuetype
-                )
+                'issuetype' => $this->specifyIdOrKey($issuetype, 'name')
             ),
             $custom
         );

@@ -165,4 +165,14 @@ abstract class JiraConnection
         }
         return $message;
     }
+    /**
+     * Returns an aray where the value is associated with id or key
+     * @param string $value The value being tested
+     * @param string $field The name of the field for the key
+     * @return string[] The associative array
+     */
+    protected function specifyIdOrKey($value, $field = 'key')
+    {
+        return array(is_numeric($value) ? 'id' : 'key' => $value);
+    }
 }
