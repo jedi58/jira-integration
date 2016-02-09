@@ -93,4 +93,17 @@ class Project extends JiraConnection
     {
         return $this->sendRequest('project');
     }
+    /**
+     * Returns an array of all project keys
+     * @return string[] The array of all project keys
+     */
+    public function getAllProjectKeys()
+    {
+        $projects = array();
+        $results = $this->getAllProjects();
+        foreach ($results as $result) {
+            $projects[] = $result->key;
+        }
+        return $projects;
+    }
 }
