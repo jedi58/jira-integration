@@ -12,19 +12,18 @@ use Inachis\Component\JiraIntegration\Comment;
 
 class CreateCommand extends JiraCommand
 {
-	protected function configure()
-	{
-		$this->setName('comment:create')
-			->setDescription('Creates a Jira ticket')
-			->setDefinition($this->getDefaultParameters());
-	}
+    protected function configure()
+    {
+        $this->setName('comment:create')
+            ->setDescription('Creates a Jira ticket')
+            ->setDefinition($this->getDefaultParameters());
+    }
 
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		$auth = $input->getOption('auth');
-		if (empty($auth)) {
-			throw new \InvalidArgumentException('Credentials must be provided');
-		}
-	}
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $auth = $input->getOption('auth');
+        if (empty($auth)) {
+            throw new \InvalidArgumentException('Credentials must be provided');
+        }
+    }
 }
-

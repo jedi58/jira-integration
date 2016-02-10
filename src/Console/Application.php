@@ -15,8 +15,8 @@ class Application extends BaseApplication
         parent::__construct(static::NAME, static::VERSION);
 
         $this->addCommands(array(
-        	new Command\Issue\CreateCommand(),
-        	new Command\Issue\GetCommand()
-    	));
+            new Command\Issue\CreateCommand(),
+            new Command\Issue\GetCommand()
+        ));
     }
 }
