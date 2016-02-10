@@ -10,7 +10,11 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9"
+        "php": ">=5.5.9",
+        "symfony/console": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
     },
     "autoload": {
         "psr-4": { "Inachis\\Component\\JiraIntegration\\": "src/" },
