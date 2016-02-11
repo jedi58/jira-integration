@@ -14,12 +14,12 @@ use Inachis\Component\JiraIntegration\Issue;
 use Inachis\Component\JiraIntegration\Console\Command\JiraCommand;
 
 /**
- *
+ * Defines the issue:create command for the console application
  */
 class CreateCommand extends JiraCommand
 {
     /**
-     *
+     * Configuration for the console command
      */
     protected function configure()
     {
@@ -32,30 +32,46 @@ class CreateCommand extends JiraCommand
             ->addArgument('description', InputArgument::OPTIONAL, 'The description for the ticket being created')
             ->addOption('type', null, InputOption::VALUE_OPTIONAL, 'The type of ticket being created. Default: bug');
     }
-
+    /**
+     * Configures the interactive part of the console application
+     * @param InputInterface $input The console input object
+     * @param OutputInterface $output The console output object
+     */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
         if (empty($input->getArgument('project'))) {
             $this->connect($input->getOption('url'), $input->getOption('auth'));
-            $projects = Project::getInstance()->getAllProjectKeys();
-            $question = new ChoiceQuestion('Project: ', $projects);
+            $question = new ChoiceQuestion(
+                'Project: ',
+                Project::getInstance()->getAllProjectKeys()
+            );
             $question->setErrorMessage('Project %s is invalid');
-            $project = $helper->ask($input, $output, $question);
-            $input->setArgument('project', $project);
+            $input->setArgument(
+                'project',
+                $helper->ask($input, $output, $question)
+            );
         }
         if (empty($input->getArgument('title'))) {
             $question = new Question('Title: ');
-            $title =  $helper->ask($input, $output, $question);
-            $input->setArgument('title', $title);
+            $input->setArgument(
+                'title',
+                $helper->ask($input, $output, $question)
+            );
         }
         if (empty($input->getArgument('description'))) {
             $question = new Question('Description: ');
-            $description =  $helper->ask($input, $output, $question);
-            $input->setArgument('description', $description);
+            $input->setArgument(
+                'description',
+                $helper->ask($input, $output, $question)
+            );
         }
     }
-
+    /**
+     * Creates the Jira ticket and outputs the issue-key
+     * @param InputInterface $input The console input object
+     * @param OutputInterface $output The console output object
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $type = $input->getOption('type');

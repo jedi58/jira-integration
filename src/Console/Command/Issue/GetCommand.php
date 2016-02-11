@@ -14,12 +14,12 @@ use Inachis\Component\JiraIntegration\Issue;
 use Inachis\Component\JiraIntegration\Console\Command\JiraCommand;
 
 /**
- *
+ * Defines the issue:get command for the console application
  */
 class GetCommand extends JiraCommand
 {
     /**
-     *
+     * Configuration for the console command
      */
     protected function configure()
     {
@@ -33,20 +33,30 @@ class GetCommand extends JiraCommand
                 'The issue to update'
             );
     }
-
+    /**
+     * Configures the interactive part of the console application
+     * @param InputInterface $input The console input object
+     * @param OutputInterface $output The console output object
+     */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         if (empty($input->getArgument('issue-key'))) {
             $this->connect($input->getOption('url'), $input->getOption('auth'));
-            $projects = Project::getInstance()->getAllProjectKeys();
-            $helper = $this->getHelper('question');
             $question = new Question('Issue key: ');
-            $question->setAutocompleterValues($projects);
-            $issue = $helper->ask($input, $output, $question);
-            $input->setArgument('issue-key', $issue);
+            $question->setAutocompleterValues(
+                Project::getInstance()->getAllProjectKeys()
+            );
+            $input->setArgument(
+                'issue-key',
+                $this->getHelper('question')->ask($input, $output, $question)
+            );
         }
     }
-
+    /**
+     * Retrieves and prints a specified Jira ticket
+     * @param InputInterface $input The console input object
+     * @param OutputInterface $output The console output object
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->connect($input->getOption('url'), $input->getOption('auth'));
@@ -60,10 +70,14 @@ class GetCommand extends JiraCommand
                 implode((array) $result->errors, PHP_EOL)
             ));
         } else {
-            $output->writeln($this->prettyPrintTicket($result, $output));
+            $this->prettyPrintTicket($result, $output);
         }
     }
-
+    /**
+     * Displays a summary of the retrieved ticket with formating
+     * @param StdClass $ticket The returned ticket
+     * @param OutputInterface $output The console output object
+     */
     private function prettyPrintTicket($ticket, OutputInterface $output)
     {
         $output->writeln(sprintf('Ticket: <info>%s</info>', $ticket->key));

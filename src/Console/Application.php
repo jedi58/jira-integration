@@ -5,6 +5,9 @@ use Symfony\Component\Console\Application as BaseApplication;
 use Inachis\Component\JiraIntegration\Console\Command\Issue\CreateCommand;
 use Inachis\Component\JiraIntegration\Console\Command\Issue\GetCommand;
 
+/**
+ * Application class for handling console access to Jira
+ */
 class Application extends BaseApplication
 {
     const NAME = 'Jira Integration Console';
