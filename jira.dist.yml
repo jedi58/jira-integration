@@ -1,0 +1,4 @@
+default:
+  url: https://demo.atlassian.net
+  auth: sfgjhklsdjfgqiergwnert34
+  project: DEMO
