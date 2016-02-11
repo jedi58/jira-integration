@@ -53,13 +53,32 @@ class GetCommand extends JiraCommand
         $result = Issue::getInstance()->get(
             $input->getArgument('issue-key')
         );
-        if (!empty($result->errors)) {
+        if ($result === null || !empty($result->errors)) {
             $output->writeln(sprintf(
-                '<error>Error retrieving ticket: %s</error>',
+                '<error>Error retrieving ticket `%s`: %s</error>',
+                $input->getArgument('issue-key'),
                 implode((array) $result->errors, PHP_EOL)
             ));
         } else {
-            $output->writeln('Ticket: ' . print_r($result, true));
+            $output->writeln($this->prettyPrintTicket($result, $output));
         }
+    }
+
+    private function prettyPrintTicket($ticket, OutputInterface $output)
+    {
+        $output->writeln(sprintf('Ticket: <info>%s</info>', $ticket->key));
+        $output->writeln(sprintf(
+            'Priority: <info>%s</info>',
+            $ticket->fields->priority->name
+        ));
+        $output->writeln(sprintf(
+            'Status: <info>%s</info>',
+            $ticket->fields->status->name
+        ));
+        $output->writeln(sprintf(
+            'Type: <info>%s</info>',
+            $ticket->fields->issuetype->name
+        ));
+        $output->writeln('-----' . PHP_EOL . $ticket->fields->description);
     }
 }

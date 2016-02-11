@@ -36,16 +36,6 @@ class CreateCommand extends JiraCommand
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
-        /*
-        $question
-            ->setAutocompleterValues($projects)
-            ->setValidator(function ($answer) {
-                if (!in_array($answer, $projects)) {
-                    throw new \RuntimeException(
-                        'A valid project key is required'
-                    );
-                }
-        });*/
         if (empty($input->getArgument('project'))) {
             $this->connect($input->getOption('url'), $input->getOption('auth'));
             $projects = Project::getInstance()->getAllProjectKeys();
@@ -76,7 +66,7 @@ class CreateCommand extends JiraCommand
             $input->getArgument('description'),
             !empty($type) ? $type : 'Bug'
         );
-        if (!empty($result->errors)) {
+        if ($result === null || !empty($result->errors)) {
             $output->writeln(sprintf(
                 '<error>Error creating ticket: %s</error>',
                 implode((array) $result->errors, PHP_EOL)
