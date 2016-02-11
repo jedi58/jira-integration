@@ -101,8 +101,10 @@ class Project extends JiraConnection
     {
         $projects = array();
         $results = $this->getAllProjects();
-        foreach ($results as $result) {
-            $projects[] = $result->key;
+        if (!empty($results)) {
+            foreach ($results as $result) {
+                $projects[] = $result->key;
+            }
         }
         return $projects;
     }
