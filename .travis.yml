@@ -4,6 +4,11 @@ php:
   - 5.6
   - 7.0
   - nightly
+
+before_script:
+  - wget http://getcomposer.org/composer.phar
+  - php composer.phar install -dev
+  - php composer.phar dump-autoload --optimize
   
 matrix:
     fast_finish: true
