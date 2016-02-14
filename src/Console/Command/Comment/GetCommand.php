@@ -26,7 +26,8 @@ class GetCommand extends JiraCommand
         parent::configure();
         $this
             ->setName('comment:get')
-            ->setDescription('Fetches details all comemnts for a specific Jira issue identified by it\'s key. e.g. DEMO-1234')
+            ->setDescription('Fetches details all comemnts for a specific
+                Jira issue identified by it\'s key. e.g. DEMO-1234')
             ->addArgument(
                 'issue-key',
                 InputArgument::OPTIONAL,
