@@ -152,11 +152,11 @@ class CreateCommand extends JiraCommand
                     $allowedValues = $this->availableConfig->projects[0]->issuetypes[0]->fields->{$name}->allowedValues;
                     foreach ($allowedValues as $allowedValue) {
                         if ($allowedValue->value == $questionAnswer) {
-                            $questionAnswer = (int) $allowedValue->id;
+                            $questionAnswer = (string) $allowedValue->id;
                             break;
                         }
                     }
-                    $custom = array((object) array(
+                    $custom[$name] = array((object) array(
                         'id' => $questionAnswer
                     ));
                     break;
