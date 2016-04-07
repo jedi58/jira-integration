@@ -12,16 +12,17 @@ The idea behind this class is that you can use this to pull out information to b
 ## Usage
 
 1. [Providing authentication details for the Jira API](#authentication)
-2. [Creating a ticket (Simple)](#createSimple)
-2. [Creating a ticket](#create)
-4. [Updating a ticket](#update)
-5. [Adding comments to tickets](#addComment)
-6. [Retrieving a specific ticket](#getTicket)
-7. [Retrieving a list of all projects](#getAllProjects)
-8. [Retrieving a list of all issue types](#getAllIssueTypes)
-9. [Retrieving available config options for a project](#getProjectIssueAvailableConfig)
-10. [Retrieving a custom field](#getCustomFieldOption)
-11. [Retrieve a list of assignable users](#getAssignableUsers)
+2. [Prompting for Custom Fields](#customFields)
+3. [Creating a ticket (Simple)](#createSimple)
+4. [Creating a ticket](#create)
+5. [Updating a ticket](#update)
+6. [Adding comments to tickets](#addComment)
+7. [Retrieving a specific ticket](#getTicket)
+8. [Retrieving a list of all projects](#getAllProjects)
+9. [Retrieving a list of all issue types](#getAllIssueTypes)
+10. [Retrieving available config options for a project](#getProjectIssueAvailableConfig)
+11. [Retrieving a custom field](#getCustomFieldOption)
+12. [Retrieve a list of assignable users](#getAssignableUsers)
 
 
 <a name="authentication"></a>
@@ -34,6 +35,21 @@ $auth = Authentication::getInstance(
 );
 ```
 These details will then be automatically used when utilising any of the below objects.
+
+
+<a name="customFields"></a>
+### Prompting for Custom Fields
+When using the console application you can prompt for customfield question from Jira by updating the `jira.yml` configuraiton file to include the customfield ID as specified by Jira, the type of question (ChoiceQuestion or Question), and any help hint text (optional).
+```yaml
+custom:
+  customfield_12345
+    type: ChoiceQuestion
+    help: This is a question that will display allowed values to chose from
+  customfield_67890
+    type: Question
+```
+
+The above example shows both types of quesitons and how they can be configured.
 
 
 <a name="createSimple"></a>
