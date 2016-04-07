@@ -31,6 +31,7 @@ class CreateCommand extends JiraCommand
             ->addArgument('title', InputArgument::OPTIONAL, 'The title of the ticket being created')
             ->addArgument('description', InputArgument::OPTIONAL, 'The description for the ticket being created')
             ->addOption('type', null, InputOption::VALUE_OPTIONAL, 'The type of ticket being created. Default: bug');
+        parent::customInput();
     }
     /**
      * Configures the interactive part of the console application
@@ -66,6 +67,43 @@ class CreateCommand extends JiraCommand
                 $helper->ask($input, $output, $question)
             );
         }
+        if (!empty($this->config['custom'])) {
+            $this->availableConfig = Issue::getInstance()->getProjectIssueAvailableConfig(
+                $input->getArgument('project')
+            );
+            foreach ($this->config['custom'] as $name => $argument) {
+                if (empty($this->availableConfig->projects[0]->issuetypes[0]->fields->{$name}->name)) {
+                    continue;
+                }
+                switch ($argument['type']) {
+                    case 'ChoiceQuestion':
+                        $allowedValues = array();
+                        $customField = $this->availableConfig->projects[0]->issuetypes[0]->fields->{$name};
+                        foreach ($customField->allowedValues as $allowedValue) {
+                            $allowedValues[$allowedValue->id] = $allowedValue->value;
+                        }
+                        $question = new ChoiceQuestion(
+                            $customField->name . ': ',
+                            $allowedValues
+                        );
+                        $input->setArgument(
+                            $name,
+                            $helper->ask($input, $output, $question)
+                        );
+                        break;
+
+                    case 'Question':
+                    default:
+                        $question = new Question(
+                            $this->availableConfig->projects[0]->issuetypes[0]->fields->{$name}->name . ': '
+                        );
+                        $input->setArgument(
+                            $name,
+                            $helper->ask($input, $output, $question)
+                        );
+                }
+            }
+        }
     }
     /**
      * Creates the Jira ticket and outputs the issue-key
@@ -76,11 +114,14 @@ class CreateCommand extends JiraCommand
     {
         $type = $input->getOption('type');
         $this->connect($input->getOption('url'), $input->getOption('auth'));
+        $custom = $this->getCustomOptionValues($input);
         $result = Issue::getInstance()->simpleCreate(
             $input->getArgument('project'),
             $input->getArgument('title'),
             $input->getArgument('description'),
-            !empty($type) ? $type : 'Bug'
+            !empty($type) ? $type : 'Bug',
+            array(),
+            $custom
         );
         if ($result === null || !empty($result->errors)) {
             $output->writeln(sprintf(
@@ -90,5 +131,41 @@ class CreateCommand extends JiraCommand
         } else {
             $output->writeln('Ticket created: <info>'.$result->key.'</info>');
         }
+    }
+    /**
+     * Returns the array of custom field values once processed dependent upon
+     * their question type.
+     * @param InputInterface $input The console input object
+     * @return string[] The array of customfield values
+     */
+    private function getCustomOptionValues($input)
+    {
+        if (empty($this->config['custom'])) {
+            return array();
+        }
+
+        $custom = array();
+        foreach ($this->config['custom'] as $name => $argument) {
+            switch ($argument['type']) {
+                case 'ChoiceQuestion':
+                    $questionAnswer = $input->getArgument($name);
+                    $allowedValues = $this->availableConfig->projects[0]->issuetypes[0]->fields->{$name}->allowedValues;
+                    foreach ($allowedValues as $allowedValue) {
+                        if ($allowedValue->value == $questionAnswer) {
+                            $questionAnswer = (int) $allowedValue->id;
+                            break;
+                        }
+                    }
+                    $custom = array((object) array(
+                        'id' => $questionAnswer
+                    ));
+                    break;
+
+                case 'Question':
+                default:
+                    $custom[$name] = $input->getArgument($name);
+            }
+        }
+        return $custom;
     }
 }
