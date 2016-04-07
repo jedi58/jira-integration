@@ -30,7 +30,8 @@ class CreateCommand extends JiraCommand
             ->addArgument('project', InputArgument::OPTIONAL, 'The project to add the ticket to')
             ->addArgument('title', InputArgument::OPTIONAL, 'The title of the ticket being created')
             ->addArgument('description', InputArgument::OPTIONAL, 'The description for the ticket being created')
-            ->addOption('type', null, InputOption::VALUE_OPTIONAL, 'The type of ticket being created. Default: bug');
+            ->addOption('type', null, InputOption::VALUE_OPTIONAL, 'The type of ticket being created. Default: bug')
+            ->addOption('hash', null, InputOption::VALUE_OPTIONAL, 'A base64 encoded JSON object containing ticket details');
         parent::customInput();
     }
     /**
@@ -41,11 +42,13 @@ class CreateCommand extends JiraCommand
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
+        $hash = !empty($input->getOption('hash')) ? json_decode(base64_decode($input->getOption('hash'))) : '';
         if (empty($input->getArgument('project'))) {
             $this->connect($input->getOption('url'), $input->getOption('auth'));
             $question = new ChoiceQuestion(
                 'Project: ',
-                Project::getInstance()->getAllProjectKeys()
+                Project::getInstance()->getAllProjectKeys(),
+                !empty($hash->project) ? $hash->project : null
             );
             $question->setErrorMessage('Project %s is invalid');
             $input->setArgument(
@@ -54,14 +57,20 @@ class CreateCommand extends JiraCommand
             );
         }
         if (empty($input->getArgument('title'))) {
-            $question = new Question('Title: ');
+            $question = new Question(
+                'Title: ',
+                !empty($hash->subject) ? $hash->subject : null
+            );
             $input->setArgument(
                 'title',
                 $helper->ask($input, $output, $question)
             );
         }
         if (empty($input->getArgument('description'))) {
-            $question = new Question('Description: ');
+            $question = new Question(
+                'Description: ',
+                !empty($hash->message) ? $hash->message : null
+            );
             $input->setArgument(
                 'description',
                 $helper->ask($input, $output, $question)
@@ -84,7 +93,8 @@ class CreateCommand extends JiraCommand
                         }
                         $question = new ChoiceQuestion(
                             $customField->name . ': ',
-                            $allowedValues
+                            $allowedValues,
+                            !empty($hash->$name) ? $hash->$name : null
                         );
                         $input->setArgument(
                             $name,
@@ -95,7 +105,8 @@ class CreateCommand extends JiraCommand
                     case 'Question':
                     default:
                         $question = new Question(
-                            $this->availableConfig->projects[0]->issuetypes[0]->fields->{$name}->name . ': '
+                            $this->availableConfig->projects[0]->issuetypes[0]->fields->{$name}->name . ': ',
+                            !empty($hash->$name) ? $hash->$name : null
                         );
                         $input->setArgument(
                             $name,
@@ -129,7 +140,10 @@ class CreateCommand extends JiraCommand
                 implode((array) $result->errors, PHP_EOL)
             ));
         } else {
-            $output->writeln('Ticket created: <info>'.$result->key.'</info>');
+            $output->writeln(
+                'Ticket created: <info>'.$result->key.'</info>' . PHP_EOL .
+                'URL: <info>' . $this->auth->getApiBaseUrl() . '/browse/' . $result->key . '</info>'
+            );
         }
     }
     /**
