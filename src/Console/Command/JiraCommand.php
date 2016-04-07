@@ -31,23 +31,31 @@ abstract class JiraCommand extends Command
      */
     protected $project;
     /**
+     * @var string[] The array of custom config options
+     */
+    protected $config;
+    /**
+     * @var string[] The array of available config options for the current project
+     */
+    protected $availableConfig;
+    /**
      * Default configuration options for console command
      */
     protected function configure()
     {
         $authProvided = false;
         if ($this->canAccessYamlConfig()) {
-            $config = Yaml::parse(file_get_contents(__DIR__ . self::CONFIG_FILE));
-            if (!empty($config['default']['url']) &&
-                    !empty($config['default']['auth'])) {
+            $this->config = Yaml::parse(file_get_contents(__DIR__ . self::CONFIG_FILE));
+            if (!empty($this->config['default']['url']) &&
+                    !empty($this->config['default']['auth'])) {
                 $this->setAuthentication(
-                    $config['default']['url'],
-                    $config['default']['auth']
+                    $this->config['default']['url'],
+                    $this->config['default']['auth']
                 );
                 $authProvided = true;
             }
-            if (!empty($config['default']['project'])) {
-                $this->defaultProject = $config['default']['project'];
+            if (!empty($this->config['default']['project'])) {
+                $this->defaultProject = $this->config['default']['project'];
             }
         }
         $this->addOption(
@@ -82,6 +90,23 @@ abstract class JiraCommand extends Command
         }
         if (empty(Authentication::getInstance()->getApiAuth())) {
             throw new \InvalidArgumentException('Credentials must be provided');
+        }
+    }
+    /**
+     * Processes the custom section of a YAML config file to prompt the user
+     * for additional questions
+     */
+    protected function customInput()
+    {
+        if (empty($this->config['custom'])) {
+            return;
+        }
+        foreach ($this->config['custom'] as $name => $argument) {
+            $this->addArgument(
+                $name,
+                InputArgument::OPTIONAL,
+                !empty($argument['help']) ? $argument['help'] : '-'
+            );
         }
     }
     /**
