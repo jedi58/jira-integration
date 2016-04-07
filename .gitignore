@@ -1,1 +1,3 @@
 jira.yml
+composer.lock
+vendor/
