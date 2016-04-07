@@ -1,8 +1,9 @@
 {
-    "name": "Inachis/JiraIntegation",
+    "name": "jedi58/jira-integation",
     "type": "library",
-    "description": "Inachis Framweork - Jira Integration component",
-    "keywords": [],
+    "description": "Jira Integration component with console application",
+    "keywords": ["Jira", "Atlassian", "Agile"],
+    "homepage": "https://github.com/jedi58/jira-integration",
     "license": "MIT",
     "authors": [
         {
