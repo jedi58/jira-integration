@@ -42,10 +42,10 @@ These details will then be automatically used when utilising any of the below ob
 When using the console application you can prompt for customfield question from Jira by updating the `jira.yml` configuraiton file to include the customfield ID as specified by Jira, the type of question (ChoiceQuestion or Question), and any help hint text (optional).
 ```yaml
 custom:
-  customfield_12345
+  customfield_12345:
     type: ChoiceQuestion
     help: This is a question that will display allowed values to chose from
-  customfield_67890
+  customfield_67890:
     type: Question
 ```
 
