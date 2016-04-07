@@ -9,6 +9,25 @@ A PHP component for interacting with the Atlassian Jira API, issue and project t
 
 The idea behind this class is that you can use this to pull out information to be used on your own website(s), or have your own web applications interact with it. The Jira API documentation this is developed against is: https://docs.atlassian.com/jira/REST/latest/
 
+## Standalone Installation
+To install you can either use one of the release packages or a clone of this repository. Once extracted or cloned, you can then run:
+
+```bash
+./install.sh
+```
+
+This will run `composer install` (downloading Composer if you don't have it) and will set the correct permissions on the console application. It will then be possible to use the console application to interact with the Jira API. Using the `--help` switch will provide a list of available commands.
+
+
+## Using Composer
+If you want to use this as part of your own project then simply add this to your `composer.json` using:
+
+```bash
+composer require jedi58/JiraIntegration
+```
+
+This will then add the requirement to your composer file.
+
 ## Usage
 
 1. [Providing authentication details for the Jira API](#authentication)
