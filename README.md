@@ -28,32 +28,14 @@ composer require jedi58/JiraIntegration
 
 This will then add the requirement to your composer file.
 
-## Usage
-
-1. [Providing authentication details for the Jira API](#authentication)
+## Console Application
+1. [General Usage](#consoleUsage)
 2. [Prompting for Custom Fields](#customFields)
-3. [Creating a ticket (Simple)](#createSimple)
-4. [Creating a ticket](#create)
-5. [Updating a ticket](#update)
-6. [Adding comments to tickets](#addComment)
-7. [Retrieving a specific ticket](#getTicket)
-8. [Retrieving a list of all projects](#getAllProjects)
-9. [Retrieving a list of all issue types](#getAllIssueTypes)
-10. [Retrieving available config options for a project](#getProjectIssueAvailableConfig)
-11. [Retrieving a custom field](#getCustomFieldOption)
-12. [Retrieve a list of assignable users](#getAssignableUsers)
 
 
-<a name="authentication"></a>
-### Providing authentication details for the Jira API
-All Jira API functions require themselves to be authenticated. Your application must first use the `Authentication` object to provide these details.
-```php
-$auth = Authentication::getInstance(
-    'https://jira.atlassian.com'
-    'user','password'
-);
-```
-These details will then be automatically used when utilising any of the below objects.
+<a name="consoleUsage"></a>
+### General Usage
+The console application can be run from the project root by running `./app/console`. Running this will provide a list of available commands such as `issue:create`. If you find yourself using the console application frequently it may be worth considering using something such as `ln -s <path-to-project>/app/console /usr/local/bin/jiraticket` so that it can be run from anywhere as `jiraticket`.
 
 
 <a name="customFields"></a>
@@ -69,6 +51,33 @@ custom:
 ```
 
 The above example shows both types of quesitons and how they can be configured.
+
+
+## Usage
+
+1. [Providing authentication details for the Jira API](#authentication)
+2. [Creating a ticket (Simple)](#createSimple)
+3. [Creating a ticket](#create)
+4. [Updating a ticket](#update)
+5. [Adding comments to tickets](#addComment)
+6. [Retrieving a specific ticket](#getTicket)
+7. [Retrieving a list of all projects](#getAllProjects)
+8. [Retrieving a list of all issue types](#getAllIssueTypes)
+9. [Retrieving available config options for a project](#getProjectIssueAvailableConfig)
+10. [Retrieving a custom field](#getCustomFieldOption)
+11. [Retrieve a list of assignable users](#getAssignableUsers)
+
+
+<a name="authentication"></a>
+### Providing authentication details for the Jira API
+All Jira API functions require themselves to be authenticated. Your application must first use the `Authentication` object to provide these details.
+```php
+$auth = Authentication::getInstance(
+    'https://jira.atlassian.com'
+    'user','password'
+);
+```
+These details will then be automatically used when utilising any of the below objects.
 
 
 <a name="createSimple"></a>
