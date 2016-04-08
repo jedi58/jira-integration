@@ -23,7 +23,7 @@ This will run `composer install` (downloading Composer if you don't have it) and
 If you want to use this as part of your own project then simply add this to your `composer.json` using:
 
 ```bash
-composer require jedi58/JiraIntegration
+composer require jedi58/jira-integration
 ```
 
 This will then add the requirement to your composer file.
