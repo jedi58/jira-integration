@@ -10,6 +10,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Inachis\Component\JiraIntegration\Project;
+use Inachis\Component\JiraIntegration\Priority;
 use Inachis\Component\JiraIntegration\Issue;
 use Inachis\Component\JiraIntegration\Console\Command\JiraCommand;
 
@@ -18,11 +19,13 @@ use Inachis\Component\JiraIntegration\Console\Command\JiraCommand;
  */
 class CreateCommand extends JiraCommand
 {
+    private $priorities;
     /**
      * Configuration for the console command
      */
     protected function configure()
     {
+        $this->priorities = Priority::getInstance()->getAllPriorityNames();
         parent::configure();
         $this
             ->setName('issue:create')
@@ -31,6 +34,7 @@ class CreateCommand extends JiraCommand
             ->addArgument('title', InputArgument::OPTIONAL, 'The title of the ticket being created')
             ->addArgument('description', InputArgument::OPTIONAL, 'The description for the ticket being created')
             ->addOption('type', null, InputOption::VALUE_OPTIONAL, 'The type of ticket being created. Default: bug')
+            ->addOption('priority', null, InputOption::VALUE_OPTIONAL, 'The priority of the ticket. Default: Medium')
             ->addOption('hash', null, InputOption::VALUE_OPTIONAL, 'A base64 encoded JSON object containing ticket details');
         parent::customInput();
     }
@@ -73,6 +77,18 @@ class CreateCommand extends JiraCommand
             );
             $input->setArgument(
                 'description',
+                $helper->ask($input, $output, $question)
+            );
+        }
+        if (empty($input->getOption('priority'))) {
+            $question = new ChoiceQuestion(
+                'Priority: ',
+                $this->priorities,
+                !empty($hash->priority) ? $hash->priority : 'Medium'
+            );
+            $question->setErrorMessage('Priority %s is invalid');
+            $input->setOption(
+                'priority',
                 $helper->ask($input, $output, $question)
             );
         }
@@ -125,7 +141,14 @@ class CreateCommand extends JiraCommand
     {
         $type = $input->getOption('type');
         $this->connect($input->getOption('url'), $input->getOption('auth'));
-        $custom = $this->getCustomOptionValues($input);
+        $custom = array_merge(
+            array(
+                'priority' => array(
+                    'name' => $input->getOption('priority')
+                )
+            ),
+            $this->getCustomOptionValues($input)
+        );
         $result = Issue::getInstance()->simpleCreate(
             $input->getArgument('project'),
             $input->getArgument('title'),
