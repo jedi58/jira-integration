@@ -3,6 +3,7 @@ engines:
     enabled: true
     config:
       languages:
+      - javascript
       - php
   fixme:
     enabled: true
@@ -10,6 +11,10 @@ engines:
     enabled: true
 ratings:
   paths:
+  - "**.inc"
+  - "**.js"
   - "**.php"
 exclude_paths:
-- tests/
+  - docs/
+  - tests/
+  - vendor/
