@@ -14,3 +14,7 @@ matrix:
     fast_finish: true
     allow_failures:
       - php: "7.0"
+
+addons:
+    code_climate:
+        repo_token: NIpWaFEWGjcB9egP2FtF3mRzS7XgP3Rzy
