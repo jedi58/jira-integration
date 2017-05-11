@@ -145,7 +145,7 @@ $ticket = Issue::getInstance()->get('DEMO-123');
 
 
 <a name="addComment"></a>
-###Adding comments to tickets
+### Adding comments to tickets
 This will add a comment to the ticket.
 ```php
 Comment::getInstance()->create('DEMO-123', 'This is a comment!', array(
@@ -158,35 +158,35 @@ The result returned is an array with the only element being the timestamp the co
 
 
 <a name="getAllProjects"></a>
-###Retrieving a list of all projects
+### Retrieving a list of all projects
 ```php
 $projects = Project::getInstance()->getAll();
 ```
 
 
 <a name="getAllIssueTypes"></a>
-###Retrieving a list of all issue types
+### Retrieving a list of all issue types
 ```php
 $issue_types = Issue::getInstance()->getIssueTypes();
 ```
 
 
 <a name="getProjectIssueAvailableConfig"></a>
-###Retrieving available config options for a project
+### Retrieving available config options for a project
 ```php
 $available_config = Issue::getInstance()->getProjectIssueAvailableConfig('SUP');
 ```
 
 
 <a name="getCustomFieldOption"></a>
-###Retrieving a custom field
+### Retrieving a custom field
 ```php
 $custom = Issue::getInstance()->getCustomFieldOption(1);
 ```
 
 
 <a name="getAssignableUsers"></a>
-###Retrieve a list of assignable users
+### Retrieve a list of assignable users
 ```php
 $users = User::getInstance()->getAll();
 ```
