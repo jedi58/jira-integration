@@ -33,6 +33,17 @@ class User extends JiraConnection
     public function getAll($options = array())
     {
         return $this->sendRequest(
+            'user/assignable/multiProjectSearch?' . http_build_query($options)
+        );
+    }
+    /**
+     * Returns an array of the assignable users for a project
+     * @param string[] $options The settings to apply to the search
+     * @return stdClass The object containing all assignable users
+     */
+    public function getAllForProject($options = array())
+    {
+        return $this->sendRequest(
             'user/assignable/search?' . http_build_query($options)
         );
     }
