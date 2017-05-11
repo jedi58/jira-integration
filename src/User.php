@@ -28,7 +28,7 @@ class User extends JiraConnection
     /**
      * Returns an array of the assignable users for a project
      * @param string[] $options The settings to apply to the search
-     * @return stdCladd The object containing all assignable users
+     * @return stdClass The object containing all assignable users
      */
     public function getAll($options = array())
     {
