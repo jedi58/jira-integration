@@ -25,7 +25,6 @@ class CreateCommand extends JiraCommand
      */
     protected function configure()
     {
-        $this->priorities = Priority::getInstance()->getAllPriorityNames();
         parent::configure();
         $this
             ->setName('issue:create')
@@ -81,6 +80,7 @@ class CreateCommand extends JiraCommand
             );
         }
         if (empty($input->getOption('priority'))) {
+            $this->priorities = Priority::getInstance()->getAllPriorityNames();
             $question = new ChoiceQuestion(
                 'Priority: ',
                 $this->priorities,
