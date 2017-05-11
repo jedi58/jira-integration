@@ -8,7 +8,7 @@ use Inachis\Component\JiraIntegration\Authentication;
  * @Entity
  * @group unit
  */
-class AuthenticationTest extends \PHPUnit_Framework_TestCase
+class AuthenticationTest extends \PHPUnit\Framework\TestCase
 {
     protected $auth;
 
