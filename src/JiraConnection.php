@@ -119,14 +119,14 @@ abstract class JiraConnection
         } else {
             curl_setopt($jiraConn, CURLOPT_HTTPGET, $data);
         }
-        $result = json_decode(curl_exec($jiraConn));
+        $this->result = json_decode(curl_exec($jiraConn));
         $this->setLastResponseCode(curl_getinfo($jiraConn, CURLINFO_HTTP_CODE));
         curl_close($jiraConn);
         $responseCode = $this->getLastResponseCode();
         if ($responseCode < 300 && $this->getUseExceptions()) {
             throw new \Exception($this->getHTTPStatusCodeAsText($responseCode));
         }
-        return $result;
+        return $this->result;
     }
     /**
      * Returns descriptive text for the provided HTTP response code
@@ -136,6 +136,10 @@ abstract class JiraConnection
     public function getHTTPStatusCodeAsText($code)
     {
         switch ($code) {
+            case 200:
+                $message = 'OK';
+                break;
+
             case 400:
                 $message = 'Invalid request';
                 break;
