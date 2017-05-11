@@ -133,7 +133,7 @@ abstract class JiraConnection
      * @param string $code The HTTP status code returns by the API request
      * @return string The descriptive error for the status code
      */
-    protected function getHTTPStatusCodeAsText($code)
+    public function getHTTPStatusCodeAsText($code)
     {
         switch ($code) {
             case 400:
