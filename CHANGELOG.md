@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.5.0
+-----
+  * Added `Priority` object for handling priorities in Jira
+  * `app/console`: Added option for specifying priority of the issue when using `issue:create`
+
 1.4.0
 -----
 
