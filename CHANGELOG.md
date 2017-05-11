@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.6.0
+-----
+  * Added `connection:test` to confirm connection to Jira API works
+  * Added `Status` object for handling Jira statuses
+
 1.5.0
 -----
   * Added `Priority` object for handling priorities in Jira
