@@ -6,6 +6,7 @@ use Inachis\Component\JiraIntegration\Console\Command\Comment\CreateCommand as C
 use Inachis\Component\JiraIntegration\Console\Command\Comment\GetCommand as GetComment;
 use Inachis\Component\JiraIntegration\Console\Command\Issue\CreateCommand as CreateIssue;
 use Inachis\Component\JiraIntegration\Console\Command\Issue\GetCommand as GetIssue;
+use Inachis\Component\JiraIntegration\Console\Command\Connection\TestCommand;
 
 /**
  * Application class for handling console access to Jira
@@ -23,7 +24,8 @@ class Application extends BaseApplication
             new CreateComment(),
             new GetComment(),
             new CreateIssue(),
-            new GetIssue()
+            new GetIssue(),
+            new TestCommand()
         ));
     }
 }
