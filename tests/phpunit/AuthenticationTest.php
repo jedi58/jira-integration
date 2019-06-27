@@ -3,12 +3,13 @@
 namespace Inachis\Tests\Component\JiraIntegration;
 
 use Inachis\Component\JiraIntegration\Authentication;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @Entity
  * @group unit
  */
-class AuthenticationTest extends \PHPUnit\Framework\TestCase
+class AuthenticationTest extends TestCase
 {
     protected $auth;
 
@@ -26,11 +27,11 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->auth->getApiBaseUrl(), 'http://test.jira');
     }
 
-    public function testGetApiAuth()
+    public function testGetUsername()
     {
         $this->assertEquals(
-            $this->auth->getApiAuth(),
-            base64_encode('user:pass')
+            $this->auth->getUsername(),
+            'user'
         );
     }
 
@@ -40,18 +41,17 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->auth->getApiBaseUrl(), 'http://test2.jira');
     }
 
-    public function testSetApiAuth()
+    public function testSetUsername()
     {
-        $this->auth->setApiAuth('test');
-        $this->assertEquals($this->auth->getApiAuth(), 'test');
+        $this->auth->setUsername('test');
+        $this->assertEquals($this->auth->getUsername(), 'test');
     }
 
-    public function testAuthenticate()
+    public function getGetAuthenticationString()
     {
-        $this->auth->authenticate('user2', 'pass2');
         $this->assertEquals(
-            $this->auth->getApiAuth(),
-            base64_encode('user2:pass2')
+            $this->auth->getAuthenticationString(),
+            'user2:pass2'
         );
     }
 }
