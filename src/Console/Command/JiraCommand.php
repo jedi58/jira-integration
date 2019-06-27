@@ -47,10 +47,12 @@ abstract class JiraCommand extends Command
         if ($this->canAccessYamlConfig()) {
             $this->config = Yaml::parse(file_get_contents(__DIR__ . self::CONFIG_FILE));
             if (!empty($this->config['default']['url']) &&
-                    !empty($this->config['default']['auth'])) {
+                    !empty($this->config['default']['username']) &&
+                    !empty($this->config['default']['token'])) {
                 $this->setAuthentication(
                     $this->config['default']['url'],
-                    $this->config['default']['auth']
+                    $this->config['default']['username'],
+                    $this->config['default']['token']
                 );
                 $authProvided = true;
             }
@@ -59,11 +61,19 @@ abstract class JiraCommand extends Command
             }
         }
         $this->addOption(
-            'auth',
+            'username',
             null,
             $authProvided ? InputOption::VALUE_OPTIONAL :
             InputOption::VALUE_REQUIRED,
-            'The base64 encoded username:password pair to use for Jira API 
+            'The colon separated username to use for Jira API 
+                authentication'
+        );
+        $this->addOption(
+            'token',
+            null,
+            $authProvided ? InputOption::VALUE_OPTIONAL :
+                InputOption::VALUE_REQUIRED,
+            'The colon separated username to use for Jira API 
                 authentication'
         );
         $this->addOption(
@@ -77,18 +87,19 @@ abstract class JiraCommand extends Command
     /**
      * Applies settings to the Authentication object from InputArgument if set
      * @param string $url The URL for Jira API
-     * @param string $credentials The base64 encoded username:password pair
+     * @param string $username The username to connect with
+     * @param string $token The token to connect with
      * @throws \InvalidArgumentException
      */
-    protected function connect($url, $credentials)
+    protected function connect($url, $username, $token)
     {
         if (!empty($url) && !empty($credentials)) {
-            $this->setAuthentication($url, $credentials);
+            $this->setAuthentication($url, $username, $token);
         }
         if (empty(Authentication::getInstance()->getApiBaseUrl())) {
             throw new \InvalidArgumentException('Jira API URL must be provided');
         }
-        if (empty(Authentication::getInstance()->getApiAuth())) {
+        if (empty(Authentication::getInstance()->getUsername()) || empty(Authentication::getInstance()->getToken())) {
             throw new \InvalidArgumentException('Credentials must be provided');
         }
     }
@@ -123,9 +134,10 @@ abstract class JiraCommand extends Command
      * @param string $url The URL for Jira API
      * @param string $credentials The base64 encoded username:password pair
      */
-    private function setAuthentication($url, $auth)
+    private function setAuthentication($url, $username, $token)
     {
         $this->auth = Authentication::getInstance($url);
-        $this->auth->setApiAuth($auth);
+        $this->auth->setUsername($username);
+        $this->auth->setToken($token);
     }
 }

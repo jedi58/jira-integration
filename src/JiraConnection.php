@@ -92,6 +92,7 @@ abstract class JiraConnection
      * @param string $method The type of request to make. Default: GET
      * @param bool $multipart Flag indicating if this is a multipart/attachment request
      * @return StdClass Object containing the returned data
+     * @throws \Exception
      */
     protected function sendRequest($url, $data = array(), $method = 'GET', $multipart = false)
     {
@@ -99,18 +100,16 @@ abstract class JiraConnection
         curl_setopt(
             $jiraConn,
             CURLOPT_URL,
-            $this->authentication->getApiBaseUrl() . '/rest/api/latest/' . $url
+            $this->authentication->getApiBaseUrl() . '/rest/api/2/' . $url
         );
-        $headers = array(
-            'Content-type: application/json',
-            'Authorization: Basic ' . $this->authentication->getApiAuth(),
-        );
+        $headers[] = 'Content-Type: application/json';
         if ($multipart) {
             $headers[0] = 'Content-type: multipart/form-data';
             $headers[] = 'X-Atlassian-Token: no-check';
         }
-        curl_setopt($jiraConn, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($jiraConn, CURLOPT_USERPWD, $this->authentication->getAuthenticationString());
         curl_setopt($jiraConn, CURLOPT_HEADER, false);
+        curl_setopt($jiraConn, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($jiraConn, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($jiraConn, CURLOPT_RETURNTRANSFER, true);
         if ($method == 'POST') {
@@ -123,6 +122,12 @@ abstract class JiraConnection
         $this->setLastResponseCode(curl_getinfo($jiraConn, CURLINFO_HTTP_CODE));
         curl_close($jiraConn);
         $responseCode = $this->getLastResponseCode();
+        if (empty($this->result)) {
+            throw new \Exception(sprintf(
+                'No response from Jira API (%s)',
+                $this->getHTTPStatusCodeAsText($responseCode)
+            ));
+        }
         if ($responseCode < 300 && $this->getUseExceptions()) {
             throw new \Exception($this->getHTTPStatusCodeAsText($responseCode));
         }

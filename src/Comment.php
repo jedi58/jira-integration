@@ -25,13 +25,13 @@ class Comment extends JiraConnection
         }
         return static::$instance;
     }
-   /**
-     * Adds a comment to the specified ticket
-     * @param string $issueKey The ticket to be updated
-     * @param string $text The markdown supported comment to add
-     * @param string[] Optional array of visibility details for comment
-     * @return stdClass The result of adding the comment
-     */
+    /**
+      * Adds a comment to the specified ticket
+      * @param string $issueKey The ticket to be updated
+      * @param string $text The markdown supported comment to add
+      * @param string[] Optional array of visibility details for comment
+      * @return stdClass The result of adding the comment
+      */
     public function create($issueKey, $text, $visibility = null)
     {
         $data = array('body' => $text);

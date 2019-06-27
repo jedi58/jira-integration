@@ -17,24 +17,27 @@ class Authentication
      */
     protected $apiBaseUrl = '';
     /**
-     * @var string The base64 encoded username:password pair to use for
-     *      authentication
+     * @var string The username to connect with
      */
-    protected $apiAuth = '';
+    protected $username = '';
+    /**
+     * @var string The token to use for connection
+     */
+    protected $token = '';
     /**
      * Returns a singleton instance of this class
      * @param string $url The URL of the Jira API
      * @param string $username The username to authenticate with
-     * @param string $password The password to authenticate with
+     * @param string $token The token to authenticate with
      * @return Authentication The singleton instance
      */
     public static function getInstance(
         $url = '',
         $username = '',
-        $password = ''
+        $token = ''
     ) {
         if (null === static::$instance) {
-            static::$instance = new static($url, $username, $password);
+            static::$instance = new static($url, $username, $token);
         }
         return static::$instance;
     }
@@ -43,17 +46,16 @@ class Authentication
      * new Authentication()
      * @param string $url The URL of the Jira API
      * @param string $username The username to authenticate with
-     * @param string $password The password to authenticate with
+     * @param string $token The token to authenticate with
      */
     protected function __construct(
         $url = '',
         $username = '',
-        $password = ''
+        $token = ''
     ) {
         $this->setApiBaseUrl($url);
-        if (!empty($username) && !empty($password)) {
-            $this->authenticate($username, $password);
-        }
+        $this->setUsername($username);
+        $this->setToken($token);
     }
     /**
      * Returns the value of {@link api_base_url}
@@ -64,12 +66,20 @@ class Authentication
         return $this->apiBaseUrl;
     }
     /**
-     * Returns the value of {@link api_auth}
-     * @return string The value of {@link api_auth}
+     * Returns the value of {@link username}
+     * @return string The value of {@link username}
      */
-    public function getApiAuth()
+    public function getUsername()
     {
-        return $this->apiAuth;
+        return $this->username;
+    }
+    /**
+     * Returns the value of {@link token}
+     * @return string The value of {@link token}
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
     /**
      * Sets the value of {@link api_base_url}
@@ -80,21 +90,24 @@ class Authentication
         $this->apiBaseUrl = $value;
     }
     /**
-     * Sets the value of {@link api_auth}
-     * @param string $value The string to set {@link api_auth} to
+     * Sets the value of {@link username}
+     * @param string $value The string to set {@link username} to
      */
-    public function setApiAuth($value)
+    public function setUsername($value)
     {
-        $this->apiAuth = $value;
+        $this->username = $value;
     }
     /**
-     * Combines the username and password and sets {@link api_auth} to
-     * the base64 encoded result
-     * @param string $username The username to use
-     * @param string $password The password to use
+     * Sets the value of {@link token}
+     * @param string $value The string to set {@link token} to
      */
-    public function authenticate($username, $password)
+    public function setToken($value)
     {
-        $this->setApiAuth(base64_encode($username . ':' . $password));
+        $this->token = $value;
+    }
+
+    public function getAuthenticationString()
+    {
+        return $this->getUsername() . ':' . $this->getToken();
     }
 }

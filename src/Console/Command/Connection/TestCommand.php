@@ -44,7 +44,7 @@ class TestCommand extends JiraCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->connect($input->getOption('url'), $input->getOption('auth'));
+        $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
         $result = Status::getInstance()->get();
         $responseCode = Status::getInstance()->getLastResponseCode();
         $responseType = $responseCode >= 400 ? 'error' : 'info';
