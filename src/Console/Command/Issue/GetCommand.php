@@ -41,7 +41,7 @@ class GetCommand extends JiraCommand
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         if (empty($input->getArgument('issue-key'))) {
-            $this->connect($input->getOption('url'), $input->getOption('auth'));
+            $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
             $question = new Question('Issue key: ');
             $question->setAutocompleterValues(
                 Project::getInstance()->getAllProjectKeys()
@@ -59,7 +59,7 @@ class GetCommand extends JiraCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->connect($input->getOption('url'), $input->getOption('auth'));
+        $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
         $result = Issue::getInstance()->get(
             $input->getArgument('issue-key')
         );

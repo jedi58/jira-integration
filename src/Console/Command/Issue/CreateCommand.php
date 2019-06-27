@@ -47,7 +47,7 @@ class CreateCommand extends JiraCommand
         $helper = $this->getHelper('question');
         $hash = !empty($input->getOption('hash')) ? json_decode(base64_decode($input->getOption('hash'))) : '';
         if (empty($input->getArgument('project'))) {
-            $this->connect($input->getOption('url'), $input->getOption('auth'));
+            $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
             $question = new ChoiceQuestion(
                 'Project: ',
                 Project::getInstance()->getAllProjectKeys(),
@@ -140,7 +140,7 @@ class CreateCommand extends JiraCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $type = $input->getOption('type');
-        $this->connect($input->getOption('url'), $input->getOption('auth'));
+        $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
         $custom = array_merge(
             array(
                 'priority' => array(
@@ -154,7 +154,7 @@ class CreateCommand extends JiraCommand
             $input->getArgument('title'),
             $input->getArgument('description'),
             !empty($type) ? $type : 'Bug',
-            array(),
+            [],
             $custom
         );
         if ($result === null || !empty($result->errors)) {
@@ -178,10 +178,9 @@ class CreateCommand extends JiraCommand
     private function getCustomOptionValues($input)
     {
         if (empty($this->config['custom'])) {
-            return array();
+            return [];
         }
-
-        $custom = array();
+        $custom = [];
         foreach ($this->config['custom'] as $name => $argument) {
             switch ($argument['type']) {
                 case 'ChoiceQuestion':
