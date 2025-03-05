@@ -15,7 +15,7 @@
         "ext-curl": "*",
         "ext-json": "*",
         "symfony/console": "*",
-        "symfony/yaml": "^3.2"
+        "symfony/yaml": ">3.2"
     },
     "require-dev": {
         "phpunit/phpunit": "*"

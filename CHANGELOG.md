@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+2.0.1
+-----
+  * Added support for newer versions of `symfomy/yaml`
+
 1.6.0
 -----
   * Added `connection:test` to confirm connection to Jira API works
