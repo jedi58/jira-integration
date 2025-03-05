@@ -2,6 +2,8 @@
 
 namespace Inachis\Component\JiraIntegration\Console\Command\Issue;
 
+use Inachis\Component\JiraIntegration\Transformer\AdfTransformer;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -57,7 +59,7 @@ class GetCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
         $result = Issue::getInstance()->get(
@@ -67,11 +69,12 @@ class GetCommand extends JiraCommand
             $output->writeln(sprintf(
                 '<error>Error retrieving ticket `%s`: %s</error>',
                 $input->getArgument('issue-key'),
-                implode((array) $result->errors, PHP_EOL)
+                implode(PHP_EOL, (array) $result->errors)
             ));
         } else {
             $this->prettyPrintTicket($result, $output);
         }
+        return Command::SUCCESS;
     }
     /**
      * Displays a summary of the retrieved ticket with formating
@@ -93,6 +96,10 @@ class GetCommand extends JiraCommand
             'Type: <info>%s</info>',
             $ticket->fields->issuetype->name
         ));
-        $output->writeln('-----' . PHP_EOL . $ticket->fields->description);
+        $output->writeln(
+            '-----' .
+            PHP_EOL .
+            AdfTransformer::getInstance()->transformFromAdf($ticket->fields->description)
+        );
     }
 }

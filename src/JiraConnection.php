@@ -100,14 +100,16 @@ abstract class JiraConnection
         curl_setopt(
             $jiraConn,
             CURLOPT_URL,
-            $this->authentication->getApiBaseUrl() . '/rest/api/2/' . $url
+            $this->authentication->getApiBaseUrl() . '/rest/api/3/' . $url
         );
-        $headers[] = 'Content-Type: application/json';
+        $headers = [
+          'Authorization: Basic ' . base64_encode($this->authentication->getAuthenticationString()),
+          'Content-Type: application/json',
+        ];
         if ($multipart) {
-            $headers[0] = 'Content-type: multipart/form-data';
+            $headers[1] = 'Content-type: multipart/form-data';
             $headers[] = 'X-Atlassian-Token: no-check';
         }
-        curl_setopt($jiraConn, CURLOPT_USERPWD, $this->authentication->getAuthenticationString());
         curl_setopt($jiraConn, CURLOPT_HEADER, false);
         curl_setopt($jiraConn, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($jiraConn, CURLOPT_FOLLOWLOCATION, true);
@@ -118,7 +120,7 @@ abstract class JiraConnection
         } else {
             curl_setopt($jiraConn, CURLOPT_HTTPGET, $data);
         }
-        $this->result = json_decode(curl_exec($jiraConn));
+        $this->result = $this->decode_if_json(curl_exec($jiraConn));
         $this->setLastResponseCode(curl_getinfo($jiraConn, CURLINFO_HTTP_CODE));
         curl_close($jiraConn);
         $responseCode = $this->getLastResponseCode();
@@ -175,7 +177,7 @@ abstract class JiraConnection
         return $message;
     }
     /**
-     * Returns an aray where the value is associated with id or key
+     * Returns an array where the value is associated with id or key
      * @param string $value The value being tested
      * @param string $field The name of the field for the key
      * @return string[] The associative array
@@ -183,5 +185,14 @@ abstract class JiraConnection
     protected function specifyIdOrKey($value, $field = 'key')
     {
         return array(is_numeric($value) ? 'id' : $field => $value);
+    }
+
+  /**
+   * @param string $result
+   * @return mixed|string
+   */
+    protected function decode_if_json(string $result)
+    {
+      return json_decode($result) ?? $result;
     }
 }

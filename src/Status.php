@@ -30,6 +30,6 @@ class Status extends JiraConnection
      */
     public function get()
     {
-        return $this->sendRequest('status');
+        return $this->sendRequest('statuses/search');
     }
 }

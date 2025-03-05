@@ -68,7 +68,7 @@ class GetCommand extends JiraCommand
             $output->writeln(sprintf(
                 '<error>Error retrieving comments for ticket `%s`: %s</error>',
                 $input->getArgument('issue-key'),
-                implode((array) $result->errors, PHP_EOL)
+                implode(PHP_EOL, (array) $result->errors)
             ));
         } else {
             $this->prettyPrintComments($result, $output);

@@ -2,6 +2,8 @@
 
 namespace Inachis\Component\JiraIntegration\Console\Command\Issue;
 
+use Inachis\Component\JiraIntegration\Transformer\AdfTransformer;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -137,7 +139,7 @@ class CreateCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $type = $input->getOption('type');
         $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
@@ -152,7 +154,7 @@ class CreateCommand extends JiraCommand
         $result = Issue::getInstance()->simpleCreate(
             $input->getArgument('project'),
             $input->getArgument('title'),
-            $input->getArgument('description'),
+            AdfTransformer::getInstance()->transformToAdf($input->getArgument('description')),
             !empty($type) ? $type : 'Bug',
             [],
             $custom
@@ -160,7 +162,7 @@ class CreateCommand extends JiraCommand
         if ($result === null || !empty($result->errors)) {
             $output->writeln(sprintf(
                 '<error>Error creating ticket: %s</error>',
-                implode((array) $result->errors, PHP_EOL)
+                implode(PHP_EOL, (array) $result->errors)
             ));
         } else {
             $output->writeln(
@@ -168,6 +170,7 @@ class CreateCommand extends JiraCommand
                 'URL: <info>' . $this->auth->getApiBaseUrl() . '/browse/' . $result->key . '</info>'
             );
         }
+        return Command::SUCCESS;
     }
     /**
      * Returns the array of custom field values once processed dependent upon

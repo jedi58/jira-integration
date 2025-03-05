@@ -65,7 +65,7 @@ abstract class JiraCommand extends Command
             null,
             $authProvided ? InputOption::VALUE_OPTIONAL :
             InputOption::VALUE_REQUIRED,
-            'The colon separated username to use for Jira API 
+            'The colon separated username to use for Jira API
                 authentication'
         );
         $this->addOption(
@@ -73,7 +73,7 @@ abstract class JiraCommand extends Command
             null,
             $authProvided ? InputOption::VALUE_OPTIONAL :
                 InputOption::VALUE_REQUIRED,
-            'The colon separated username to use for Jira API 
+            'The colon separated username to use for Jira API
                 authentication'
         );
         $this->addOption(
