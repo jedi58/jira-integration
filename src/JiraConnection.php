@@ -187,12 +187,12 @@ abstract class JiraConnection
         return array(is_numeric($value) ? 'id' : $field => $value);
     }
 
-  /**
-   * @param string $result
-   * @return mixed|string
-   */
+    /**
+     * @param string $result
+     * @return mixed|string
+     */
     protected function decode_if_json(string $result)
     {
-      return json_decode($result) ?? $result;
+        return json_decode($result) ?? $result;
     }
 }

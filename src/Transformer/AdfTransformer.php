@@ -27,18 +27,15 @@ class AdfTransformer
         if (!empty($description->content)) {
             return $this->transformFromAdf($description->content) .
                 ($description->type == 'paragraph' ? PHP_EOL : '');
-        }
-        elseif (is_array($description)) {
+        } elseif (is_array($description)) {
             $output = '';
-            foreach($description as $item) {
+            foreach ($description as $item) {
                 $output .= $this->transformFromAdf($item);
             }
             return $output;
-        }
-        elseif (!empty($description->text)) {
+        } elseif (!empty($description->text)) {
             return $description->text;
-        }
-        elseif (!empty($description->type) && $description->type == 'hardBreak') {
+        } elseif (!empty($description->type) && $description->type == 'hardBreak') {
             return PHP_EOL;
         }
         return $description;
@@ -60,7 +57,7 @@ class AdfTransformer
     private function convertToAdf($lines)
     {
         $output = [];
-        if(is_array($lines)){
+        if (is_array($lines)) {
             foreach ($lines as $line) {
                 $output[] = [
                     'type' => 'paragraph',
