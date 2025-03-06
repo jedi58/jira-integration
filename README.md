@@ -38,16 +38,16 @@ This will then add the requirement to your composer file.
 The console application can be run from the project root by running `./app/console`. Running this will provide a list of available commands such as `issue:create`. If you find yourself using the console application frequently it may be worth considering using something such as `ln -s <path-to-project>/app/console /usr/local/bin/jiraticket` so that it can be run from anywhere as `jiraticket`.
 
 The current list of commands are:
-```shell
+```
  comment
   comment:create   Adds a comment to a specified Jira ticket
-  comment:get      Fetches details all comemnts for a specific
-                   Jira issue identified by it's key. e.g. DEMO-1234
+  comment:get      Fetches details all comments for a specific Jira issue identified by it's key. e.g. DEMO-1234
  connection
   connection:test  Tests the connection to the Jira API
  issue
   issue:create     Creates a new Jira ticket and returns the unique key
   issue:get        Fetches details of a specific Jira issue specified by it's key. e.g. DEMO-1234
+  issue:search     Search using JQL for an array of Jira issues
 ```
 
 <a name="customFields"></a>
