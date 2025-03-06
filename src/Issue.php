@@ -2,6 +2,7 @@
 
 namespace Inachis\Component\JiraIntegration;
 
+use http\Exception\InvalidArgumentException;
 use Inachis\Component\JiraIntegration\JiraConnection;
 
 /**
@@ -30,7 +31,7 @@ class Issue extends JiraConnection
      * @param string[] Settings to apply to the ticket
      * @return stdClass The object containing the issue key
      */
-    public function create($data = array())
+    public function create($data = [])
     {
         return $this->sendRequest('issue', $data, 'POST');
     }
@@ -50,17 +51,17 @@ class Issue extends JiraConnection
         $title,
         $description,
         $issuetype = 'Bug',
-        $timetracking = array(),
-        $custom = array()
+        $timetracking = [],
+        $custom = []
     ) {
-        $data = array();
+        $data = [];
         $data['fields'] = array_merge(
-            array(
+            [
                 'project' => $this->specifyIdOrKey($project),
                 'summary' => $title,
                 'description' => $description,
                 'issuetype' => $this->specifyIdOrKey($issuetype, 'name')
-            ),
+            ],
             $custom
         );
         if (isset($data['timetracking']) && !empty($timetracking)) {
@@ -92,9 +93,9 @@ class Issue extends JiraConnection
     {
         return $this->sendRequest(
             'issue/' . urlencode($issueKey),
-            array(
+            [
                 'deleteSubtasks' => (string) $removeSubtasks
-            ),
+            ],
             'DELETE'
         );
     }
@@ -107,7 +108,7 @@ class Issue extends JiraConnection
     {
         return $this->sendRequest(
             'issue/' . urlencode($issueKey),
-            array(),
+            [],
             'GET'
         );
     }
@@ -123,9 +124,9 @@ class Issue extends JiraConnection
     {
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) . '/assignee',
-            array(
+            [
                 'name' => $assignee
-            ),
+            ],
             'PUT'
         );
     }
@@ -139,10 +140,10 @@ class Issue extends JiraConnection
     {
         return $this->sendRequest(
             'issue/' . $issueKey . '/attachments',
-            array(
+            [
                 'filename' => 'test',
                 'file' => '@' . $filepath . ';filename=' . basename($filepath)
-            ),
+            ],
             'POST',
             true
         );
@@ -177,14 +178,34 @@ class Issue extends JiraConnection
     public function editMetadata($issueKey, $data)
     {
         if (!isset($data['fields'])) {
-            $data = array(
+            $data = [
                 'fields' => $data
-            );
+            ];
         }
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) . '/editmeta',
             $data,
             'GET'
+        );
+    }
+
+    /**
+     * Search for tickets using JQL
+     * (see https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/)
+     * @param array $criteria JQL must be provided, everything else is optional
+     * @return array
+     * @throws \Exception
+     */
+    public function search(array $criteria)
+    {
+        if (!isset($criteria['jql'])) {
+            throw new \Exception('Search must include bounded JQL expression. See https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-jql-post');
+        }
+
+        return $this->sendRequest(
+            'search/jql',
+            $criteria,
+            'POST'
         );
     }
 }

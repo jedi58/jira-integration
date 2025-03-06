@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+3.0.0
+-----
+  * Updated to use Atlassian Jira REST API v3. PHP 7.1 minimum requirement
+
 2.0.1
 -----
   * Added support for newer versions of `symfomy/yaml`

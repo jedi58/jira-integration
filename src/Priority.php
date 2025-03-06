@@ -48,7 +48,7 @@ class Priority extends JiraConnection
      */
     public function getAllPriorityNames()
     {
-        $names = array();
+        $names = [];
         $priorities = self::getAll();
         foreach ($priorities as $priority) {
             $names[$priority->id] = $priority->name;

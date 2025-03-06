@@ -18,7 +18,7 @@ use Inachis\Component\JiraIntegration\Console\Command\JiraCommand;
 /**
  * Defines the issue:get command for the console application
  */
-class GetCommand extends JiraCommand
+class SearchCommand extends JiraCommand
 {
     /**
      * Configuration for the console command
@@ -27,12 +27,12 @@ class GetCommand extends JiraCommand
     {
         parent::configure();
         $this
-            ->setName('issue:get')
-            ->setDescription('Fetches details of a specific Jira issue specified by it\'s key. e.g. DEMO-1234')
+            ->setName('issue:search')
+            ->setDescription('Fetches a list of issue keys matching JQL')
             ->addArgument(
-                'issue-key',
-                InputArgument::OPTIONAL,
-                'The issue to update'
+                'jql',
+                InputArgument::REQUIRED,
+                'JQL used for searching'
             );
     }
     /**
@@ -42,14 +42,11 @@ class GetCommand extends JiraCommand
      */
     protected function interact(InputInterface $input, OutputInterface $output) : void
     {
-        if (empty($input->getArgument('issue-key'))) {
+        if (empty($input->getArgument('jql'))) {
             $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
-            $question = new Question('Issue key: ');
-            $question->setAutocompleterValues(
-                Project::getInstance()->getAllProjectKeys()
-            );
+            $question = new Question('JQL: ');
             $input->setArgument(
-                'issue-key',
+                'jql',
                 $this->getHelper('question')->ask($input, $output, $question)
             );
         }
@@ -62,13 +59,19 @@ class GetCommand extends JiraCommand
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
-        $result = Issue::getInstance()->get(
-            $input->getArgument('issue-key')
+        $result = Issue::getInstance()->search(
+            [
+                'fields' => [
+                    'id',
+                    'key',
+                    'summary',
+                ],
+                'jql' => $input->getArgument('jql'),
+            ]
         );
         if ($result === null || !empty($result->errors)) {
             $output->writeln(sprintf(
-                '<error>Error retrieving ticket `%s`: %s</error>',
-                $input->getArgument('issue-key'),
+                '<error>Error with jql statement: %s</error>',
                 implode(PHP_EOL, (array) $result->errors)
             ));
         } else {
@@ -81,25 +84,15 @@ class GetCommand extends JiraCommand
      * @param StdClass $ticket The returned ticket
      * @param OutputInterface $output The console output object
      */
-    private function prettyPrintTicket($ticket, OutputInterface $output) : void
+    private function prettyPrintTicket($result, OutputInterface $output) : void
     {
-        $output->writeln(sprintf('Ticket: <info>%s</info>', $ticket->key));
-        $output->writeln(sprintf(
-            'Priority: <info>%s</info>',
-            $ticket->fields->priority->name
-        ));
-        $output->writeln(sprintf(
-            'Status: <info>%s</info>',
-            $ticket->fields->status->name
-        ));
-        $output->writeln(sprintf(
-            'Type: <info>%s</info>',
-            $ticket->fields->issuetype->name
-        ));
-        $output->writeln(
-            '-----' .
-            PHP_EOL .
-            AdfTransformer::getInstance()->transformFromAdf($ticket->fields->description)
-        );
+        if (empty($result->issues)) {
+            $output->writeln('<info>No issues found.</info>');
+        } else {
+            //$output->writeln(implode(',', array_column($result->issues, 'key')) . PHP_EOL);
+            foreach ($result->issues as $issue) {
+                $output->writeln(sprintf('%s: %s', $issue->key, $issue->fields->summary));
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@
 
 A PHP component for interacting with the Atlassian Jira API, issue and project tracking software used by Agile teams.
 
-The idea behind this class is that you can use this to pull out information to be used on your own website(s), or have your own web applications interact with it. The Jira API documentation this is developed against is: https://docs.atlassian.com/jira/REST/latest/
+The idea behind this class is that you can use this to pull out information to be used on your own website(s), or have your own web applications interact with it. The Jira API documentation this is developed against is: https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/#about
 
 ## Standalone Installation
 To install you can either use one of the release packages or a clone of this repository. Once extracted or cloned, you can then run:
@@ -37,6 +37,18 @@ This will then add the requirement to your composer file.
 ### General Usage
 The console application can be run from the project root by running `./app/console`. Running this will provide a list of available commands such as `issue:create`. If you find yourself using the console application frequently it may be worth considering using something such as `ln -s <path-to-project>/app/console /usr/local/bin/jiraticket` so that it can be run from anywhere as `jiraticket`.
 
+The current list of commands are:
+```shell
+ comment
+  comment:create   Adds a comment to a specified Jira ticket
+  comment:get      Fetches details all comemnts for a specific
+                   Jira issue identified by it's key. e.g. DEMO-1234
+ connection
+  connection:test  Tests the connection to the Jira API
+ issue
+  issue:create     Creates a new Jira ticket and returns the unique key
+  issue:get        Fetches details of a specific Jira issue specified by it's key. e.g. DEMO-1234
+```
 
 <a name="customFields"></a>
 ### Prompting for Custom Fields
@@ -74,7 +86,8 @@ All Jira API functions require themselves to be authenticated. Your application 
 ```php
 $auth = Authentication::getInstance(
     'https://jira.atlassian.com'
-    'user','password'
+    'user',
+    'password'
 );
 ```
 These details will then be automatically used when utilising any of the below objects.
@@ -89,10 +102,10 @@ $case = Issue::getInstance()->simpleCreate(
     'A test ticket',
     'There is an issue here - please fix it',
     'Bug',
-    array(
+    [
         'originalEstimate' => '1d 2h 25m'
         'remainingEstimate' => ''
-    )
+    ]
 );
 ```
 
@@ -103,16 +116,16 @@ This can also take optional parameters for setting the type of ticket, time trac
 ### Creating a ticket
 This is a more versatile version of the function for creating a ticket in Jira. It will only take an array as it's parameter and expects you to pass in everything required.
 ```php
-$case_id = Issue::getInstance()->create(array('fields' => array(
-    'project' => array(
+$case_id = Issue::getInstance()->create(['fields' => [
+    'project' => [
         'key' => 'DEMO'
-    ),
+    ],
     'summary' => 'A test ticket',
     'description' => 'There is an issue here - please fix it',
-    'issuetype' => array(
+    'issuetype' => [
         'name' => 'Bug'
-    )
-)));
+    ]
+]]);
 ```
 
 As with the `simpleCreate` function this will return an stClass containing the ID of the ticket that has been created.
@@ -122,9 +135,9 @@ As with the `simpleCreate` function this will return an stClass containing the I
 ### Updating a ticket
 This is a more versatile way of updating a ticket's properties - all changes must be passed in to the array.
 ```php
-$case = Issue::getInstance()->update('DEMO-1234', array('fields' => array(
+$case = Issue::getInstance()->update('DEMO-1234', ['fields' => [
     'summary' => 'This is the new description of the ticket'
-)));
+]]);
 ```
 
 
@@ -148,10 +161,10 @@ $ticket = Issue::getInstance()->get('DEMO-123');
 ### Adding comments to tickets
 This will add a comment to the ticket.
 ```php
-Comment::getInstance()->create('DEMO-123', 'This is a comment!', array(
+Comment::getInstance()->create('DEMO-123', 'This is a comment!', [
     'type' => 'role',
     'value' => 'Administrators'
-));
+]);
 ```
 
 The result returned is an array with the only element being the timestamp the comment was added. The array in this example represents the visibility of the comment and is optional.

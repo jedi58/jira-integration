@@ -2,6 +2,7 @@
 
 namespace Inachis\Component\JiraIntegration\Console\Command\Comment;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +22,7 @@ class GetCommand extends JiraCommand
     /**
      * Configuration for the console command
      */
-    protected function configure()
+    protected function configure() : void
     {
         parent::configure();
         $this
@@ -39,7 +40,7 @@ class GetCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output) : void
     {
         if (empty($input->getArgument('issue-key'))) {
             $this->connect($input->getOption('url'), $input->getOption('auth'));
@@ -58,7 +59,7 @@ class GetCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->connect($input->getOption('url'), $input->getOption('auth'));
         $result = Comment::getInstance()->getAll(
@@ -68,18 +69,20 @@ class GetCommand extends JiraCommand
             $output->writeln(sprintf(
                 '<error>Error retrieving comments for ticket `%s`: %s</error>',
                 $input->getArgument('issue-key'),
-                implode((array) $result->errors, PHP_EOL)
+                implode(PHP_EOL, (array) $result->errors)
             ));
         } else {
             $this->prettyPrintComments($result, $output);
         }
+
+        return Command::SUCCESS;
     }
     /**
      * Displays a summary of the retrieved ticket's comments with formating
      * @param StdClass $comments The returned ticket
      * @param OutputInterface $output The console output object
      */
-    private function prettyPrintComments($comments, OutputInterface $output)
+    private function prettyPrintComments($comments, OutputInterface $output) : void
     {
         foreach ($comments->comments as $key => $comment) {
             $output->writeln(sprintf(

@@ -2,6 +2,7 @@
 
 namespace Inachis\Component\JiraIntegration\Console\Command\Connection;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +21,7 @@ class TestCommand extends JiraCommand
     /**
      * Configuration for the console command
      */
-    protected function configure()
+    protected function configure() : void
     {
         parent::configure();
         $this
@@ -33,7 +34,7 @@ class TestCommand extends JiraCommand
      * @param OutputInterface $output The console output object
      * @return void
      */
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output) : void
     {
     }
     /**
@@ -42,7 +43,7 @@ class TestCommand extends JiraCommand
      * @param OutputInterface $output The console output object
      * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
         $result = Status::getInstance()->get();
@@ -56,5 +57,7 @@ class TestCommand extends JiraCommand
             Status::getInstance()->getHTTPStatusCodeAsText($responseCode)
         ));
         $output->writeln(sprintf('Output: %s', substr(json_encode(Status::getInstance()->getResult()), 0, 500) . '…'));
+
+        return Command::SUCCESS;
     }
 }

@@ -30,7 +30,7 @@ class User extends JiraConnection
      * @param string[] $options The settings to apply to the search
      * @return stdClass The object containing all assignable users
      */
-    public function getAll($options = array())
+    public function getAll($options = [])
     {
         return $this->sendRequest(
             'user/assignable/multiProjectSearch?' . http_build_query($options)
@@ -41,7 +41,7 @@ class User extends JiraConnection
      * @param string[] $options The settings to apply to the search
      * @return stdClass The object containing all assignable users
      */
-    public function getAllForProject($options = array())
+    public function getAllForProject($options = [])
     {
         return $this->sendRequest(
             'user/assignable/search?' . http_build_query($options)

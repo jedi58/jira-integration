@@ -2,6 +2,7 @@
 
 namespace Inachis\Component\JiraIntegration\Console\Command\Comment;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +22,7 @@ class CreateCommand extends JiraCommand
     /**
      * Configuration for the console command
      */
-    protected function configure()
+    protected function configure() : void
     {
         parent::configure();
         $this->setName('comment:create')
@@ -34,7 +35,7 @@ class CreateCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output) : void
     {
         $helper = $this->getHelper('question');
         if (empty($input->getArgument('issue'))) {
@@ -57,7 +58,7 @@ class CreateCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->connect($input->getOption('url'), $input->getOption('auth'));
         $result = Comment::getInstance()->create(
@@ -67,12 +68,13 @@ class CreateCommand extends JiraCommand
         if ($result === null || !empty($result->errors)) {
             $output->writeln(sprintf(
                 '<error>Error creating comment: %s</error>',
-                implode((array) $result->errors, PHP_EOL)
+                implode(PHP_EOL, (array) $result->errors)
             ));
         } else {
             $output->writeln(
                 'Comment created: <info>' . $result->id . '</info>'
             );
         }
+        return Command::SUCCESS;
     }
 }
