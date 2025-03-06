@@ -21,7 +21,7 @@ class TestCommand extends JiraCommand
     /**
      * Configuration for the console command
      */
-    protected function configure()
+    protected function configure() : void
     {
         parent::configure();
         $this
@@ -34,7 +34,7 @@ class TestCommand extends JiraCommand
      * @param OutputInterface $output The console output object
      * @return void
      */
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output) : void
     {
     }
     /**
@@ -43,7 +43,7 @@ class TestCommand extends JiraCommand
      * @param OutputInterface $output The console output object
      * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
         $result = Status::getInstance()->get();

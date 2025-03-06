@@ -41,7 +41,7 @@ abstract class JiraCommand extends Command
     /**
      * Default configuration options for console command
      */
-    protected function configure()
+    protected function configure() : void
     {
         $authProvided = false;
         if ($this->canAccessYamlConfig()) {
@@ -91,7 +91,7 @@ abstract class JiraCommand extends Command
      * @param string $token The token to connect with
      * @throws \InvalidArgumentException
      */
-    protected function connect($url, $username, $token)
+    protected function connect($url, $username, $token) : void
     {
         if (!empty($url) && !empty($credentials)) {
             $this->setAuthentication($url, $username, $token);
@@ -107,24 +107,23 @@ abstract class JiraCommand extends Command
      * Processes the custom section of a YAML config file to prompt the user
      * for additional questions
      */
-    protected function customInput()
+    protected function customInput() : void
     {
-        if (empty($this->config['custom'])) {
-            return;
-        }
-        foreach ($this->config['custom'] as $name => $argument) {
-            $this->addArgument(
-                $name,
-                InputArgument::OPTIONAL,
-                !empty($argument['help']) ? $argument['help'] : '-'
-            );
+        if (!empty($this->config['custom'])) {
+            foreach ($this->config['custom'] as $name => $argument) {
+                $this->addArgument(
+                    $name,
+                    InputArgument::OPTIONAL,
+                    !empty($argument['help']) ? $argument['help'] : '-'
+                );
+            }
         }
     }
     /**
      * Returns the result of checking if YAML config file exists and can be read
      * @return bool The result of trying to read a YAML config file
      */
-    private function canAccessYamlConfig()
+    private function canAccessYamlConfig() : bool
     {
         return file_exists(__DIR__ . self::CONFIG_FILE) &&
             is_readable(__DIR__ . self::CONFIG_FILE);
@@ -134,7 +133,7 @@ abstract class JiraCommand extends Command
      * @param string $url The URL for Jira API
      * @param string $credentials The base64 encoded username:password pair
      */
-    private function setAuthentication($url, $username, $token)
+    private function setAuthentication($url, $username, $token) : void
     {
         $this->auth = Authentication::getInstance($url);
         $this->auth->setUsername($username);

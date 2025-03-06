@@ -22,7 +22,7 @@ class CreateCommand extends JiraCommand
     /**
      * Configuration for the console command
      */
-    protected function configure()
+    protected function configure() : void
     {
         parent::configure();
         $this->setName('comment:create')
@@ -35,7 +35,7 @@ class CreateCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output) : void
     {
         $helper = $this->getHelper('question');
         if (empty($input->getArgument('issue'))) {

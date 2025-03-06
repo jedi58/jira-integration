@@ -32,15 +32,15 @@ class Worklog extends JiraConnection
      * @param string[] $options Any additional options that should be applied
      * @return stdClass The result of adding the worklog entry
      */
-    public function create($issueKey, $timeSpent = '', $options = array())
+    public function create($issueKey, $timeSpent = '', $options = [])
     {
         $timeKey = is_int($timeSpent) ? 'timeSpentSeconds' : 'timeSpent';
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) . '/worklog',
             array_merge(
-                array(
+                [
                     $timeKey => $timeSpent
-                ),
+                ],
                 $options
             ),
             'POST'
@@ -58,16 +58,16 @@ class Worklog extends JiraConnection
         $issueKey,
         $worklogKey,
         $timeSpent = '',
-        $options = array()
+        $options = []
     ) {
         $timeKey = is_int($timeSpent) ? 'timeSpentSeconds' : 'timeSpent';
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) .
             '/worklog/' . urlencode($worklogKey),
             array_merge(
-                array(
+                [
                     $timeKey => $timeSpent
-                ),
+                ],
                 $options
             ),
             'PUT'
@@ -84,7 +84,7 @@ class Worklog extends JiraConnection
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) .
             '/worklog/' . urlencode($worklogKey),
-            array(),
+            [],
             'DELETE'
         );
     }

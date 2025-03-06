@@ -25,7 +25,7 @@ class CreateCommand extends JiraCommand
     /**
      * Configuration for the console command
      */
-    protected function configure()
+    protected function configure() : void
     {
         parent::configure();
         $this
@@ -44,7 +44,7 @@ class CreateCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output) : void
     {
         $helper = $this->getHelper('question');
         $hash = !empty($input->getOption('hash')) ? json_decode(base64_decode($input->getOption('hash'))) : '';
@@ -104,7 +104,7 @@ class CreateCommand extends JiraCommand
                 }
                 switch ($argument['type']) {
                     case 'ChoiceQuestion':
-                        $allowedValues = array();
+                        $allowedValues = [];
                         $customField = $this->availableConfig->projects[0]->issuetypes[0]->fields->{$name};
                         foreach ($customField->allowedValues as $allowedValue) {
                             $allowedValues[$allowedValue->id] = $allowedValue->value;
@@ -144,11 +144,11 @@ class CreateCommand extends JiraCommand
         $type = $input->getOption('type');
         $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
         $custom = array_merge(
-            array(
-                'priority' => array(
+            [
+                'priority' => [
                     'name' => $input->getOption('priority')
-                )
-            ),
+                ]
+            ],
             $this->getCustomOptionValues($input)
         );
         $result = Issue::getInstance()->simpleCreate(
@@ -178,7 +178,7 @@ class CreateCommand extends JiraCommand
      * @param InputInterface $input The console input object
      * @return string[] The array of customfield values
      */
-    private function getCustomOptionValues($input)
+    private function getCustomOptionValues($input) : array
     {
         if (empty($this->config['custom'])) {
             return [];
@@ -195,9 +195,9 @@ class CreateCommand extends JiraCommand
                             break;
                         }
                     }
-                    $custom[$name] = array((object) array(
+                    $custom[$name] = [(object) [
                         'id' => $questionAnswer
-                    ));
+                    ]];
                     break;
 
                 case 'Question':

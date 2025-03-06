@@ -34,7 +34,7 @@ class Comment extends JiraConnection
       */
     public function create($issueKey, $text, $visibility = null)
     {
-        $data = array('body' => $text);
+        $data = ['body' => $text];
         if (!empty($visibility)) {
             $data['visibility'] = $visibility;
         }
@@ -58,7 +58,7 @@ class Comment extends JiraConnection
         $text,
         $visibility = null
     ) {
-        $data - array('body' => $text);
+        $data = [ 'body' => $text ];
         if (!empty($visibility)) {
             $data['visibility'] = $visibility;
         }
@@ -80,7 +80,7 @@ class Comment extends JiraConnection
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) .
             '/comment/' . urlencode($commentId),
-            array(),
+            [],
             'DELETE'
         );
     }
@@ -108,7 +108,7 @@ class Comment extends JiraConnection
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) .
             '/comment/' . urlencode($commentId),
-            array('expand' => 'true')
+            [ 'expand' => 'true' ]
         );
     }
     /**
@@ -131,7 +131,7 @@ class Comment extends JiraConnection
     {
         return $this->sendRequest(
             'issue/' . urlencode($issueKey) . '/comment',
-            array('expand' => 'true')
+            [ 'expand' => 'true' ]
         );
     }
 }

@@ -19,6 +19,7 @@ class AdfTransformer
     }
 
     /**
+     * Turn formatted ADF content into a string
      * @param $description
      * @return string|object|array
      */
@@ -42,19 +43,25 @@ class AdfTransformer
     }
 
     /**
+     * Turn a string into structured ADF JSON
      * @param $description
      * @return string|object|array
      */
-    public function transformToAdf($description)
+    public function transformToAdf($description) : array
     {
-        $output = [
+        return [
             'type' => 'doc',
             'version' => 1,
             'content' => $this->convertToAdf(explode(PHP_EOL . PHP_EOL, $description)),
         ];
     }
 
-    private function convertToAdf($lines)
+    /**
+     * Turns a line of text into an ADF partial
+     * @param $lines
+     * @return array
+     */
+    private function convertToAdf($lines) : array
     {
         $output = [];
         if (is_array($lines)) {

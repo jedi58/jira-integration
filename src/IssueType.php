@@ -36,11 +36,11 @@ class IssueType extends JiraConnection
     {
         return $this->sendRequest(
             'issuetype',
-            array(
+            [
                 'name' => $name,
                 'description' => $description,
                 'type' => $type
-            ),
+            ],
             'POST'
         );
     }
@@ -56,11 +56,11 @@ class IssueType extends JiraConnection
     {
         return $this->sendRequest(
             'issuetype/' . urlencode($typeKey),
-            array(
+            [
                 'name' => $name,
                 'description' => $description,
                 'type' => $type
-            ),
+            ],
             'PUT'
         );
     }
@@ -73,7 +73,7 @@ class IssueType extends JiraConnection
     {
         return $this->sendRequest(
             'issuetype/' . urlencode($typeKey),
-            array(),
+            [],
             'DELETE'
         );
     }

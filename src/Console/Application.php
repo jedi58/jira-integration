@@ -6,6 +6,7 @@ use Inachis\Component\JiraIntegration\Console\Command\Comment\CreateCommand as C
 use Inachis\Component\JiraIntegration\Console\Command\Comment\GetCommand as GetComment;
 use Inachis\Component\JiraIntegration\Console\Command\Issue\CreateCommand as CreateIssue;
 use Inachis\Component\JiraIntegration\Console\Command\Issue\GetCommand as GetIssue;
+use Inachis\Component\JiraIntegration\Console\Command\Issue\SearchCommand as SearchIssues;
 use Inachis\Component\JiraIntegration\Console\Command\Connection\TestCommand;
 
 /**
@@ -14,18 +15,19 @@ use Inachis\Component\JiraIntegration\Console\Command\Connection\TestCommand;
 class Application extends BaseApplication
 {
     const NAME = 'Jira Integration Console';
-    const VERSION = '1.2.0';
+    const VERSION = '3.0.0';
 
     public function __construct()
     {
         parent::__construct(static::NAME, static::VERSION);
 
-        $this->addCommands(array(
+        $this->addCommands([
             new CreateComment(),
             new GetComment(),
             new CreateIssue(),
             new GetIssue(),
-            new TestCommand()
-        ));
+            new SearchIssues(),
+            new TestCommand(),
+        ]);
     }
 }

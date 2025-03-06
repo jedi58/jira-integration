@@ -33,7 +33,7 @@ class Permission extends JiraConnection
      */
     public function get($projectOrIssue = '', $key = '')
     {
-        $data = array();
+        $data = [];
         if (!empty($projectOrIssue) && !empty($key)) {
             $data[$projectOrIssue . is_int($key) ? 'Id' : 'Key'] = $key;
         }

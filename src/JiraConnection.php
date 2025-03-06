@@ -94,7 +94,7 @@ abstract class JiraConnection
      * @return StdClass Object containing the returned data
      * @throws \Exception
      */
-    protected function sendRequest($url, $data = array(), $method = 'GET', $multipart = false)
+    protected function sendRequest($url, $data = [], $method = 'GET', $multipart = false)
     {
         $jiraConn = curl_init();
         curl_setopt(
@@ -184,7 +184,7 @@ abstract class JiraConnection
      */
     protected function specifyIdOrKey($value, $field = 'key')
     {
-        return array(is_numeric($value) ? 'id' : $field => $value);
+        return [ is_numeric($value) ? 'id' : $field => $value ];
     }
 
     /**

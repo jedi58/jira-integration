@@ -32,16 +32,16 @@ class Project extends JiraConnection
      * @param string[] $options Array of additional options to apply to project
      * @return stdClass The result of creating the project
      */
-    public function createProject($projectKey, $name, $lead, $options = array())
+    public function createProject($projectKey, $name, $lead, $options = [])
     {
         return $this->sendRequest(
             'project',
             array_merge(
-                array(
+                [
                     'key' => $projectKey,
                     'name' => $name,
                     'lead' => $lead
-                ),
+                ],
                 $options
             ),
             'POST'
@@ -54,7 +54,7 @@ class Project extends JiraConnection
      * @param string[] $options Array of additional options to apply to project
      * @return stdClass The result of updating the project
      */
-    public function updateProject($projectKey, $name, $options = array())
+    public function updateProject($projectKey, $name, $options = [])
     {
         $options['name'] = $name;
         return $this->sendRequest(
@@ -72,7 +72,7 @@ class Project extends JiraConnection
     {
         return $this->sendRequest(
             'project/' . urlencode($projectKey),
-            array(),
+            [],
             'DELETE'
         );
     }
@@ -99,7 +99,7 @@ class Project extends JiraConnection
      */
     public function getAllProjectKeys()
     {
-        $projects = array();
+        $projects = [];
         $results = $this->getAllProjects();
         if (!empty($results)) {
             foreach ($results as $result) {
