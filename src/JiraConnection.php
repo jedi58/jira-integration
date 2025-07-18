@@ -124,14 +124,22 @@ abstract class JiraConnection
         $this->setLastResponseCode(curl_getinfo($jiraConn, CURLINFO_HTTP_CODE));
         curl_close($jiraConn);
         $responseCode = $this->getLastResponseCode();
+
         if (empty($this->result)) {
-            throw new \Exception(sprintf(
-                'No response from Jira API (%s)',
-                $this->getHTTPStatusCodeAsText($responseCode)
-            ));
+            if ($error_number = curl_errno($jiraConn)) {
+                if (in_array($error_number, array(CURLE_OPERATION_TIMEDOUT, CURLE_OPERATION_TIMEOUTED))) {
+                    throw new \Exception(sprintf('Connection to Jira API timed out'));
+                }
+            }
         }
-        if ($responseCode < 300 && $this->getUseExceptions()) {
-            throw new \Exception($this->getHTTPStatusCodeAsText($responseCode));
+        if ($responseCode >= 400) {
+            $error = 'Error ' . $responseCode . ': ' .
+                implode('. ', $this->result->errorMessages) .
+                (!empty($this->result->errors->comment)? $this->result->errors->comment : '');
+            error_log($error);
+            if ($this->getUseExceptions()) {
+                throw new \Exception($this->getHTTPStatusCodeAsText($error));
+            }
         }
         return $this->result;
     }
