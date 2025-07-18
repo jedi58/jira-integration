@@ -7,6 +7,8 @@ use Inachis\Component\JiraIntegration\Console\Command\Comment\GetCommand as GetC
 use Inachis\Component\JiraIntegration\Console\Command\Issue\CreateCommand as CreateIssue;
 use Inachis\Component\JiraIntegration\Console\Command\Issue\GetCommand as GetIssue;
 use Inachis\Component\JiraIntegration\Console\Command\Issue\SearchCommand as SearchIssues;
+use Inachis\Component\JiraIntegration\Console\Command\Issue\GetTransitionsCommand as GetIssueTransitions;
+use Inachis\Component\JiraIntegration\Console\Command\Issue\TransitionCommand as TransitionCommand;
 use Inachis\Component\JiraIntegration\Console\Command\Connection\TestCommand;
 
 /**
@@ -27,6 +29,8 @@ class Application extends BaseApplication
             new CreateIssue(),
             new GetIssue(),
             new SearchIssues(),
+            new GetIssueTransitions(),
+            new TransitionCommand(),
             new TestCommand(),
         ]);
     }
