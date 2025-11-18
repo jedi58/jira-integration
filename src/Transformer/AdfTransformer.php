@@ -28,21 +28,17 @@ class AdfTransformer
         if (!empty($description->content)) {
             return $this->transformFromAdf($description->content) .
                 ($description->type == 'paragraph' ? PHP_EOL : '');
-        }
-        elseif (is_array($description)) {
+        } elseif (is_array($description)) {
             $output = '';
             foreach ($description as $item) {
                 $output .= $this->transformFromAdf($item);
             }
             return $output;
-        }
-        elseif (!empty($description->text)) {
+        } elseif (!empty($description->text)) {
             return $description->text;
-        }
-        elseif (!empty($description->type) && $description->type == 'hardBreak') {
+        } elseif (!empty($description->type) && $description->type == 'hardBreak') {
             return PHP_EOL;
-        }
-        elseif (!empty($description->type) && $description->type == 'rule') {
+        } elseif (!empty($description->type) && $description->type == 'rule') {
             return PHP_EOL . '---' . PHP_EOL;
         }
 
