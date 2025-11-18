@@ -23,6 +23,10 @@ abstract class JiraCommand extends Command
      */
     protected $auth;
     /**
+     * @var string The path for loading a jira.yml file if available
+     */
+    protected $configPath;
+    /**
      * @var string The default project to use
      */
     protected $defaultProject;
@@ -42,6 +46,18 @@ abstract class JiraCommand extends Command
      * @var string[] The array of available config options for the current project
      */
     protected $availableConfig;
+
+    /**
+     * If no configuration path is provided, it will use the default
+     * @param string|null $configPath The path to load the Jira API config from
+     */
+    public function __construct(?string $configPath = null)
+    {
+        $this->configPath = $configPath ?? __DIR__ . self::CONFIG_FILE;
+
+        parent::__construct();
+    }
+
     /**
      * Default configuration options for console command
      */
@@ -49,10 +65,10 @@ abstract class JiraCommand extends Command
     {
         $authProvided = false;
         if ($this->canAccessYamlConfig()) {
-            $this->config = Yaml::parse(file_get_contents(__DIR__ . self::CONFIG_FILE));
+            $this->config = Yaml::parse(file_get_contents($this->configPath));
             if (!empty($this->config['default']['url']) &&
-                    !empty($this->config['default']['username']) &&
-                    !empty($this->config['default']['token'])) {
+                !empty($this->config['default']['username']) &&
+                !empty($this->config['default']['token'])) {
                 $this->setAuthentication(
                     $this->config['default']['url'],
                     $this->config['default']['username'],
@@ -68,7 +84,7 @@ abstract class JiraCommand extends Command
             'username',
             null,
             $authProvided ? InputOption::VALUE_OPTIONAL :
-            InputOption::VALUE_REQUIRED,
+                InputOption::VALUE_REQUIRED,
             'The colon separated username to use for Jira API
                 authentication'
         );
@@ -84,7 +100,7 @@ abstract class JiraCommand extends Command
             'url',
             null,
             $authProvided ? InputOption::VALUE_OPTIONAL :
-            InputOption::VALUE_REQUIRED,
+                InputOption::VALUE_REQUIRED,
             'The URL of the Jira API to connect to'
         );
     }
@@ -129,8 +145,8 @@ abstract class JiraCommand extends Command
      */
     private function canAccessYamlConfig() : bool
     {
-        return file_exists(__DIR__ . self::CONFIG_FILE) &&
-            is_readable(__DIR__ . self::CONFIG_FILE);
+        return file_exists($this->configPath) &&
+            is_readable($this->configPath);
     }
     /**
      * Applies settings to the Authentication object
