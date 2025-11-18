@@ -3,19 +3,23 @@
 namespace Inachis\Component\JiraIntegration\Console\Command\Issue;
 
 use Inachis\Component\JiraIntegration\Transformer\AdfTransformer;
+use Inachis\Component\JiraIntegration\Transition;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Inachis\Component\JiraIntegration\Project;
 use Inachis\Component\JiraIntegration\Issue;
 use Inachis\Component\JiraIntegration\Console\Command\JiraCommand;
 
 /**
- * Defines the issue:get command for the console application
+ * Defines the issue:get-transitions command for the console application
  */
-class GetCommand extends JiraCommand
+class GetTransitionsCommand extends JiraCommand
 {
     /**
      * Configuration for the console command
@@ -24,12 +28,12 @@ class GetCommand extends JiraCommand
     {
         parent::configure();
         $this
-            ->setName('issue:get')
-            ->setDescription('Fetches details of a specific Jira issue specified by it\'s key. e.g. DEMO-1234')
+            ->setName('issue:get-transitions')
+            ->setDescription('Fetches transitions available for an issue by it\'s key. e.g. DEMO-1234')
             ->addArgument(
                 'issue-key',
-                InputArgument::OPTIONAL,
-                'The issue to update'
+                InputArgument::REQUIRED,
+                'The issue to get available transitions for'
             );
     }
     /**
@@ -52,14 +56,14 @@ class GetCommand extends JiraCommand
         }
     }
     /**
-     * Retrieves and prints a specified Jira ticket
+     * Retrieves and prints available transitions for a specified Jira ticket
      * @param InputInterface $input The console input object
      * @param OutputInterface $output The console output object
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->connect($input->getOption('url'), $input->getOption('username'), $input->getOption('token'));
-        $result = Issue::getInstance()->get(
+        $result = Transition::getInstance()->getAll(
             $input->getArgument('issue-key')
         );
         if ($result === null || !empty($result->errors)) {
@@ -69,42 +73,19 @@ class GetCommand extends JiraCommand
                 implode(PHP_EOL, (array) $result->errors)
             ));
         } else {
-            $this->prettyPrintTicket($result, $output);
+            $this->prettyPrintTransitions($result, $output);
         }
         return Command::SUCCESS;
     }
     /**
-     * Displays a summary of the retrieved ticket with formating
-     * @param StdClass $ticket The returned ticket
+     * Displays a summary of available transitions for a ticket
+     * @param StdClass $ticket The transitions available
      * @param OutputInterface $output The console output object
      */
-    private function prettyPrintTicket($ticket, OutputInterface $output) : void
+    private function prettyPrintTransitions($transitions, OutputInterface $output) : void
     {
-        $output->writeln(sprintf('Ticket: <info>%s</info>', $ticket->key));
-        $output->writeln(sprintf(
-            'Priority: <info>%s</info>',
-            $ticket->fields->priority->name
-        ));
-        $output->writeln(sprintf(
-            'Status: <info>%s</info>',
-            $ticket->fields->status->name
-        ));
-        $output->writeln(sprintf(
-            'Type: <info>%s</info>',
-            $ticket->fields->issuetype->name
-        ));
-        $output->writeln(
-            '-----' .
-            PHP_EOL .
-            AdfTransformer::getInstance()->transformFromAdf($ticket->fields->description)
-        );
-        $links = $ticket->fields->issuelinks ?? [];
-        foreach ($links as $link) {
-            $output->writeln(sprintf(
-                'Ticket %s <info>%s</info>',
-                $link->type->inward,
-                $link->inwardIssue->key
-            ));
+        foreach ($transitions->transitions as $transition) {
+            $output->writeln(sprintf('%d - %s => %s', (int) $transition->id, $transition->name, $transition->to->name));
         }
     }
 }

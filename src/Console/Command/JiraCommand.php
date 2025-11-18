@@ -23,6 +23,10 @@ abstract class JiraCommand extends Command
      */
     protected $auth;
     /**
+     * @var string The default project to use
+     */
+    protected $defaultProject;
+    /**
      * @var QuestionHelper Used to provide interactive elements in console
      */
     protected $helper;
