@@ -4,13 +4,10 @@ namespace Inachis\Component\JiraIntegration\Console\Command\Issue;
 
 use Inachis\Component\JiraIntegration\Transformer\AdfTransformer;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Inachis\Component\JiraIntegration\Project;
 use Inachis\Component\JiraIntegration\Issue;
 use Inachis\Component\JiraIntegration\Console\Command\JiraCommand;
@@ -101,5 +98,13 @@ class GetCommand extends JiraCommand
             PHP_EOL .
             AdfTransformer::getInstance()->transformFromAdf($ticket->fields->description)
         );
+        $links = $ticket->fields->issuelinks ?? [];
+        foreach ($links as $link) {
+            $output->writeln(sprintf(
+                'Ticket %s <info>%s</info>',
+                $link->type->inward,
+                $link->inwardIssue->key
+            ));
+        }
     }
 }

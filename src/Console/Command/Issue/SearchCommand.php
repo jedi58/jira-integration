@@ -2,21 +2,17 @@
 
 namespace Inachis\Component\JiraIntegration\Console\Command\Issue;
 
-use Inachis\Component\JiraIntegration\Transformer\AdfTransformer;
+use stdClass;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Inachis\Component\JiraIntegration\Project;
 use Inachis\Component\JiraIntegration\Issue;
 use Inachis\Component\JiraIntegration\Console\Command\JiraCommand;
 
 /**
- * Defines the issue:get command for the console application
+ * Defines the issue:search command for the console application
  */
 class SearchCommand extends JiraCommand
 {
@@ -28,6 +24,7 @@ class SearchCommand extends JiraCommand
         parent::configure();
         $this
             ->setName('issue:search')
+            ->setAliases(['i:s', 'is'])
             ->setDescription('Fetches a list of issue keys matching JQL')
             ->addArgument(
                 'jql',
@@ -81,7 +78,7 @@ class SearchCommand extends JiraCommand
     }
     /**
      * Displays a summary of the retrieved ticket with formating
-     * @param StdClass $ticket The returned ticket
+     * @param stdClass $ticket The returned ticket
      * @param OutputInterface $output The console output object
      */
     private function prettyPrintTicket($result, OutputInterface $output) : void
@@ -89,9 +86,8 @@ class SearchCommand extends JiraCommand
         if (empty($result->issues)) {
             $output->writeln('<info>No issues found.</info>');
         } else {
-            //$output->writeln(implode(',', array_column($result->issues, 'key')) . PHP_EOL);
             foreach ($result->issues as $issue) {
-                $output->writeln(sprintf('%s: %s', $issue->key, $issue->fields->summary));
+                $output->writeln(sprintf('%s: %s', $issue->key, trim($issue->fields->summary)));
             }
         }
     }
