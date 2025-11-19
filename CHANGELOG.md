@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+3.3.0
+-----
+  * Configuration path now supports using .env location to locate jira.yml
+
+3.2.0
+-----
+  * Configuration path for JiraCommand is now configurable
+
+3.1.0
+-----
+  * Added support for executing transitions
+
 3.0.0
 -----
   * Updated to use Atlassian Jira REST API v3. PHP 7.1 minimum requirement

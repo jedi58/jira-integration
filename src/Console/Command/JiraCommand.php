@@ -15,10 +15,6 @@ use Inachis\Component\JiraIntegration\Authentication;
 abstract class JiraCommand extends Command
 {
     /**
-     * @const string The relative path to look in fr YAML config
-     */
-    const CONFIG_FILE = '/../../../jira.yml';
-    /**
      * @var string Base64 encoded username:password pair
      */
     protected $auth;
@@ -53,7 +49,9 @@ abstract class JiraCommand extends Command
      */
     public function __construct(?string $configPath = null)
     {
-        $this->configPath = $configPath ?? __DIR__ . self::CONFIG_FILE;
+        $this->configPath = $configPath ?: (isset($_ENV['SYMFONY_DOTENV_PATH']) ?
+            pathinfo($_ENV['SYMFONY_DOTENV_PATH'], PATHINFO_DIRNAME) . '/jira.yml' :
+            __DIR__ . '/../../../jira.yml');
 
         parent::__construct();
     }
